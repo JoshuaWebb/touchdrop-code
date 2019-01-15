@@ -1,0 +1,23 @@
+import React from 'react';
+
+const Background = () => {
+  const style = {
+    fill: '#232323',
+  };
+
+  // TODO: take from outside / make less arbitrary
+  const width = 5000;
+  const height = 1200;
+
+  return (
+    <rect
+      style={style}
+      x={width / -2}
+      y={-height}
+      width={width}
+      height={height}
+    />
+  );
+};
+
+export default Background;
