@@ -5,7 +5,12 @@ import Canvas from './components/Canvas';
 class App extends Component {
   constructor(props) {
     super(props);
-    this.oldGameInput = {};
+    this.oldGameInput = {
+      left : { isDown: false, halfTransitionCount: 0 },
+      right: { isDown: false, halfTransitionCount: 0 },
+      up   : { isDown: false, halfTransitionCount: 0 },
+      down : { isDown: false, halfTransitionCount: 0 },
+    };
     this.newGameInput = {
       left : { isDown: false, halfTransitionCount: 0 },
       right: { isDown: false, halfTransitionCount: 0 },
@@ -14,6 +19,7 @@ class App extends Component {
     };
     this.keydown = this.keydown.bind(this);
     this.keyup = this.keyup.bind(this);
+    this.gameLoop = this.gameLoop.bind(this);
   }
 
   processKey(button, isDown) {
@@ -53,6 +59,24 @@ class App extends Component {
     }
   }
 
+  gameLoop() {
+    this.props.moveObjects(this.newGameInput);
+
+    // save the input from this frame
+    // maintain the `isDown` state across frames
+    var temp = this.oldGameInput;
+    this.oldGameInput = this.newGameInput;
+    this.newGameInput = temp;
+    this.newGameInput.left.isDown = this.oldGameInput.left.isDown;
+    this.newGameInput.left.halfTransitionCount = 0;
+    this.newGameInput.right.isDown = this.oldGameInput.right.isDown;
+    this.newGameInput.right.halfTransitionCount = 0;
+    this.newGameInput.up.isDown = this.oldGameInput.up.isDown;
+    this.newGameInput.up.halfTransitionCount = 0;
+    this.newGameInput.down.isDown = this.oldGameInput.down.isDown;
+    this.newGameInput.down.halfTransitionCount = 0;
+  }
+
   componentDidMount() {
     window.onresize = () => {
       const cnv = document.getElementById('game-canvas');
@@ -64,20 +88,7 @@ class App extends Component {
     document.addEventListener("keydown", this.keydown, false);
     document.addEventListener("keyup", this.keyup, false);
 
-    const self = this;
-    setInterval(() => {
-      self.props.moveObjects(self.newGameInput);
-
-      // save the input from this frame
-      self.oldGameInput = self.newGameInput;
-      // maintain the `isDown` state across frames
-      self.newGameInput = {
-        left : { isDown: self.oldGameInput.left.isDown , halfTransitionCount: 0 },
-        right: { isDown: self.oldGameInput.right.isDown, halfTransitionCount: 0 },
-        up   : { isDown: self.oldGameInput.up.isDown   , halfTransitionCount: 0 },
-        down : { isDown: self.oldGameInput.down.isDown , halfTransitionCount: 0 },
-      };
-    }, 16);
+    setInterval(this.gameLoop, 16);
   }
 
   componentWillUnmount() {
