@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Background from './Background';
+import Field from './Field';
 import Ball from './Ball';
 
 const Canvas = (props) => {
@@ -10,9 +11,12 @@ const Canvas = (props) => {
   return (
     <svg
       id="game-canvas"
+      preserveAspectRatio="xMidYMax slice"
+      shapeRendering="crispEdges"
       viewBox={viewBox}
     >
       <Background />
+      <Field />
       <Ball pos={props.pos} />
     </svg>
   );

@@ -2,7 +2,7 @@ import React from 'react';
 
 const Background = () => {
   const style = {
-    fill: '#232323',
+    fill: '#121212',
   };
 
   // TODO: take from outside / make less arbitrary

@@ -88,7 +88,7 @@ class App extends Component {
     document.addEventListener("keydown", this.keydown, false);
     document.addEventListener("keyup", this.keyup, false);
 
-    setInterval(this.gameLoop, 16);
+    setInterval(this.gameLoop, 33);
   }
 
   componentWillUnmount() {

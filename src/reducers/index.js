@@ -3,8 +3,8 @@ import moveObjects from './moveObjects';
 
 const initialState = {
   pos: {
-    x:  0,
-    y: -50,
+    x:  400,
+    y: -100,
   }
 };
 
