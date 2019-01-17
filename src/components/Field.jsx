@@ -14,7 +14,7 @@ const Field = (props) => {
   const width = blockSizeInUnits * fieldWidthInBlocks;
   const height = blockSizeInUnits * fieldHeightInBlocks;
 
-  const yOffset = 50;
+  const yOffset = 100;
   const xLeft = width / -2;
   const yTop = -yOffset-height;
 
