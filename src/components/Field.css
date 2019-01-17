@@ -1,0 +1,15 @@
+.grid-block {
+  transition: fill 1s;
+  fill: #232323;
+  stroke-width: 1;
+  stroke: #FFFFFF33;
+}
+
+.grid-block-flash {
+  /* Snap immeidately to this state.
+     But then transition out based on the
+     transitions for original classes */
+  transition: none;
+
+  fill: Red;
+}

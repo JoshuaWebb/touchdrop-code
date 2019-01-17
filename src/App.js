@@ -5,21 +5,30 @@ import Canvas from './components/Canvas';
 class App extends Component {
   constructor(props) {
     super(props);
+
     this.oldGameInput = {
       left : { isDown: false, halfTransitionCount: 0 },
       right: { isDown: false, halfTransitionCount: 0 },
       up   : { isDown: false, halfTransitionCount: 0 },
       down : { isDown: false, halfTransitionCount: 0 },
     };
+
     this.newGameInput = {
       left : { isDown: false, halfTransitionCount: 0 },
       right: { isDown: false, halfTransitionCount: 0 },
       up   : { isDown: false, halfTransitionCount: 0 },
       down : { isDown: false, halfTransitionCount: 0 },
     };
+
+    this.dude = {
+      row : -1,
+      col : -1,
+    };
+
     this.keydown = this.keydown.bind(this);
     this.keyup = this.keyup.bind(this);
     this.gameLoop = this.gameLoop.bind(this);
+    this.click = this.click.bind(this);
   }
 
   processKey(button, isDown) {
@@ -27,6 +36,11 @@ class App extends Component {
       button.halfTransitionCount++;
     }
     button.isDown = isDown;
+  }
+
+  click(row, col) {
+    this.dude.row = row;
+    this.dude.col = col;
   }
 
   keydown(event) {
@@ -61,6 +75,7 @@ class App extends Component {
 
   gameLoop() {
     this.props.moveObjects(this.newGameInput);
+    this.props.highlightDude(this.dude);
 
     // save the input from this frame
     // maintain the `isDown` state across frames
@@ -100,6 +115,8 @@ class App extends Component {
     return (
       <Canvas
         pos={this.props.pos}
+        dude={this.props.dude}
+        click={this.click}
       />
     );
   }

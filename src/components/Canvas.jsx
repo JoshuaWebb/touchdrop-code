@@ -16,7 +16,7 @@ const Canvas = (props) => {
       viewBox={viewBox}
     >
       <Background />
-      <Field />
+      <Field dude={props.dude} click={props.click} />
       <Ball pos={props.pos} />
     </svg>
   );

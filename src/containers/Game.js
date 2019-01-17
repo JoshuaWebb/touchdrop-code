@@ -1,15 +1,19 @@
 import { connect } from 'react-redux';
 
 import App from '../App';
-import { moveObjects } from '../actions/index';
+import { moveObjects, highlightDude } from '../actions/index';
 
 const mapStateToProps = state => ({
   pos: state.pos,
+  dude: state.dude,
 });
 
 const mapDispatchToProps = dispatch => ({
   moveObjects: (param) => {
     dispatch(moveObjects(param));
+  },
+  highlightDude: (param) => {
+    dispatch(highlightDude(param));
   },
 });
 
