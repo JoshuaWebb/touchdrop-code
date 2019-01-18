@@ -1,6 +1,11 @@
-import { MOVE_OBJECTS, HIGHLIGHT_DUDE } from '../actions';
+import { MOVE_OBJECTS, HIGHLIGHT_DUDE, CYCLE_PIECES } from '../actions';
 import moveObjects from './moveObjects';
 import highlightDude from './highlightDude';
+import cyclePieces from './cyclePieces';
+
+
+// TODO: I think this is probably bad style to be in the component...
+import { PIECE_NONE } from '../components/Piece';
 
 const initialState = {
   pos: {
@@ -10,7 +15,8 @@ const initialState = {
   dude: {
     row: -1,
     col: -1,
-  }
+  },
+  currentPiece: PIECE_NONE,
 };
 
 function reducer(state = initialState, action) {
@@ -19,6 +25,8 @@ function reducer(state = initialState, action) {
       return moveObjects(state, action);
     case HIGHLIGHT_DUDE:
       return highlightDude(state, action);
+    case CYCLE_PIECES:
+      return cyclePieces(state, action);
     default:
       return state;
   }

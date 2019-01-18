@@ -25,6 +25,11 @@ class App extends Component {
       col : -1,
     };
 
+    this.pieceDebug = {
+      next : false,
+      prev : false,
+    };
+
     this.keydown = this.keydown.bind(this);
     this.keyup = this.keyup.bind(this);
     this.gameLoop = this.gameLoop.bind(this);
@@ -54,6 +59,16 @@ class App extends Component {
       case 83: this.processKey(this.newGameInput.down, true); break;
       // 'w'
       case 87: this.processKey(this.newGameInput.up, true); break;
+      // ',' (<)
+      case 188:
+        this.pieceDebug.next = false;
+        this.pieceDebug.prev = true;
+      break;
+      // '.' (>)
+      case 190:
+        this.pieceDebug.next = true;
+        this.pieceDebug.prev = false;
+      break;
       // no default
     }
   }
@@ -76,6 +91,12 @@ class App extends Component {
   gameLoop() {
     this.props.moveObjects(this.newGameInput);
     this.props.highlightDude(this.dude);
+    this.props.cyclePieces(this.pieceDebug);
+
+    this.pieceDebug.prev = false;
+    this.pieceDebug.next = false;
+    this.dude.row = -1;
+    this.dude.col = -1;
 
     // save the input from this frame
     // maintain the `isDown` state across frames
@@ -116,6 +137,7 @@ class App extends Component {
       <Canvas
         pos={this.props.pos}
         dude={this.props.dude}
+        currentPiece={this.props.currentPiece}
         click={this.click}
       />
     );
