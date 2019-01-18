@@ -48,6 +48,11 @@ class App extends Component {
     this.dude.col = col;
   }
 
+  selectOrientation(orientation) {
+    // TODO: set the selected orientation
+    console.log(orientation);
+  }
+
   keydown(event) {
     // TODO: configurable keys
     switch (event.keyCode) {
@@ -139,6 +144,7 @@ class App extends Component {
         dude={this.props.dude}
         currentPiece={this.props.currentPiece}
         click={this.click}
+        selectOrientation={this.selectOrientation}
       />
     );
   }

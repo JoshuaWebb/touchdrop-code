@@ -8,15 +8,33 @@ import OrientationSelector from './OrientationSelector';
 import { ORIENTATION_UP, ORIENTATION_RIGHT, ORIENTATION_DOWN, ORIENTATION_LEFT }
   from './Piece'
 
+const orientations = [
+  ORIENTATION_LEFT,
+  ORIENTATION_UP,
+  ORIENTATION_RIGHT,
+  ORIENTATION_DOWN
+];
+
 const Canvas = (props) => {
   const gameHeight = 1200;
   const viewBox = [window.innerWidth / -2, -gameHeight, window.innerWidth, gameHeight];
 
+  // TODO: move to a collection component?
   const osSize = 70;
   const osMargin = 16;
-  const allOsWidth = (osSize * 4 + osMargin * 3); 
+  const allOsWidth = (osSize * orientations.length + osMargin * (orientations.length - 1));
   const osXStart = allOsWidth / -2;
   const osYStart = -100 + osMargin;
+
+  const orientationSelectors = orientations.map((orientation, i) =>
+    <OrientationSelector
+      key={`ori${i}`}
+      x={osXStart + (osSize + osMargin)*i} y={osYStart}
+      width={osSize} height={osSize}
+      orientation={orientation}
+      piece={props.currentPiece}
+      selectOrientation={props.selectOrientation} />
+  );
 
   return (
     <svg
@@ -28,29 +46,7 @@ const Canvas = (props) => {
       <Background />
       <Field dude={props.dude}
              click={props.click} />
-      <OrientationSelector
-        x={osXStart} y={osYStart}
-        width={osSize} height={osSize}
-        orientation={ORIENTATION_LEFT}
-        piece={props.currentPiece} />
-      <OrientationSelector
-        x={osXStart + osSize + osMargin} y={osYStart}
-        width={osSize} height={osSize}
-        orientation={ORIENTATION_UP}
-        piece={props.currentPiece} />
-      <OrientationSelector
-        x={osXStart + (osSize + osMargin)*2} y={osYStart}
-        width={osSize} height={osSize}
-        orientation={ORIENTATION_RIGHT}
-        piece={props.currentPiece} />
-      <OrientationSelector
-        x={osXStart + (osSize + osMargin)*3} y={osYStart}
-        width={osSize} height={osSize}
-        orientation={ORIENTATION_DOWN}
-        piece={props.currentPiece} />
-
-
-
+      {orientationSelectors}
       <Ball pos={props.pos} />
     </svg>
   );

@@ -3,22 +3,26 @@ import React from 'react';
 import Piece from './Piece';
 
 const OrientationSelector = (props) => {
-  const piece = props.piece;
-  const orientation = props.orientation;
+  const { piece, orientation, selectOrientation } = props;
+
   const style = {
     fill: 'transparent',
     strokeWidth: 1.5,
     stroke: '#FFFFFF',
   };
 
+  const padding = 4;
+  const cornerRadius = 6;
+  const blockSize = (props.width - padding * 2) / 4;
+
   return (
-    <g>
+    <g onClick={selectOrientation.bind(this, orientation)} >
       <rect
         fill="transparent"
         x={props.x}
         y={props.y}
-        rx={6}
-        ry={6}
+        rx={cornerRadius}
+        ry={cornerRadius}
         width={props.width}
         height={props.height}
         shapeRendering="auto"
@@ -26,7 +30,7 @@ const OrientationSelector = (props) => {
       <Piece
         piece={piece}
         orientation={orientation}
-        blockSize={16}
+        blockSize={blockSize}
         cx={props.x + props.width / 2}
         cy={props.y + props.height / 2}
       />
