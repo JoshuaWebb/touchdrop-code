@@ -3,7 +3,10 @@ import React from 'react';
 import Background from './Background';
 import Field from './Field';
 import Ball from './Ball';
+import Piece from './Piece';
 import OrientationSelector from './OrientationSelector';
+
+import { blockSizeInUnits } from '../constants';
 
 import { ORIENTATION_UP, ORIENTATION_RIGHT, ORIENTATION_DOWN, ORIENTATION_LEFT }
   from './Piece'
@@ -33,8 +36,25 @@ const Canvas = (props) => {
       width={osSize} height={osSize}
       orientation={orientation}
       piece={props.currentPiece}
+      selected={props.orientation === orientation}
       selectOrientation={props.selectOrientation} />
   );
+
+  // TODO: centralise these :FieldPlacement
+  const fieldX = -130;
+  const fieldY = -620;
+
+  const pieceX = fieldX + props.dude.col * blockSizeInUnits;
+  const pieceY = fieldY + props.dude.row * blockSizeInUnits;
+
+  const activePiece = props.dude.row !== -1
+    ? <Piece
+        x={pieceX}
+        y={pieceY}
+        piece={props.currentPiece}
+        orientation={props.orientation}
+        blockSize={blockSizeInUnits} />
+    : null;
 
   return (
     <svg
@@ -50,6 +70,7 @@ const Canvas = (props) => {
       <Background />
       <Field dude={props.dude}
              click={props.click} />
+      {activePiece}
       {orientationSelectors}
       <Ball pos={props.pos} />
     </svg>

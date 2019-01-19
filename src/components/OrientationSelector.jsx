@@ -2,21 +2,27 @@ import React from 'react';
 
 import Piece from './Piece';
 
-const OrientationSelector = (props) => {
-  const { piece, orientation, selectOrientation } = props;
+const style = {
+  fill: 'transparent',
+  strokeWidth: 1.5,
+  stroke: '#FFFFFF',
+};
 
-  const style = {
-    fill: 'transparent',
-    strokeWidth: 1.5,
-    stroke: '#FFFFFF',
-  };
+const selectedStyle = {
+  fill: '#FFFFFF3F',
+  strokeWidth: 1.5,
+  stroke: '#FFFFFF',
+};
+
+const OrientationSelector = (props) => {
+  const { piece, orientation, selected, selectOrientation } = props;
 
   const padding = 4;
   const cornerRadius = 6;
   const blockSize = (props.width - padding * 2) / 4;
 
   return (
-    <g onClick={selectOrientation.bind(this, orientation)} >
+    <g onMouseDown={selectOrientation.bind(this, orientation)} >
       <rect
         fill="transparent"
         x={props.x}
@@ -26,7 +32,7 @@ const OrientationSelector = (props) => {
         width={props.width}
         height={props.height}
         shapeRendering="auto"
-        style={style} />
+        style={selected ? selectedStyle : style} />
       <Piece
         piece={piece}
         orientation={orientation}

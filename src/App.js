@@ -33,12 +33,15 @@ class App extends Component {
       prev : false,
     };
 
+    this.orientation = -1;
+
     this.touchStartedNearField = false;
 
     this.keydown = this.keydown.bind(this);
     this.keyup = this.keyup.bind(this);
     this.gameLoop = this.gameLoop.bind(this);
     this.click = this.click.bind(this);
+    this.selectOrientation = this.selectOrientation.bind(this);
     this.touchStart = this.touchStart.bind(this);
     this.touchMove = this.touchMove.bind(this);
     this.touchEnd = this.touchEnd.bind(this);
@@ -56,9 +59,11 @@ class App extends Component {
     this.dude.col = col;
   }
 
+  // TODO: We should change the name of one of these
+  // to disambiguate it from the action that actually
+  // updates the state/container.
   selectOrientation(orientation) {
-    // TODO: set the selected orientation
-    console.log(orientation);
+    this.orientation = orientation;
   }
 
   keydown(event) {
@@ -114,7 +119,7 @@ class App extends Component {
   }
 
   fieldPoint(canvasPoint) {
-    // TODO: don't hardcode these
+    // TODO: centralise these :FieldPlacement
     const fieldX = -130;
     const fieldY = -620;
 
@@ -124,7 +129,7 @@ class App extends Component {
     const col = Math.floor(fcpx / blockSizeInUnits);
     const row = Math.floor(fcpy / blockSizeInUnits);
 
-    return {col, row}
+    return {col, row};
   }
 
   touchStart(event) {
@@ -201,13 +206,10 @@ class App extends Component {
 
     if (this.touchStartedNearField) {
       event.preventDefault();
-    }
 
-    // TODO: this will probably be the trigger
-    // to attempt to drop the piece rather
-    // than clearing the row/col
-    this.dude.row = -1;
-    this.dude.col = -1;
+      // TODO: check if we can place it here...
+      this.place = true;
+    }
 
     this.touchStartedNearField = false;
   }
@@ -217,10 +219,25 @@ class App extends Component {
     this.props.highlightDude(this.dude);
     this.props.cyclePieces(this.pieceDebug);
 
+    // reset after placing
+    if (this.place) {
+      this.dude.row = -1;
+      this.dude.col = -1;
+      this.orientation = -1;
+      this.place = false;
+
+      this.props.nextPiece();
+    }
+
+    // Only do after potentially resetting above
+    // so that we don't highlight the orientation
+    // of the _next_ piece for a single frame if
+    // we select the orientation and the destination
+    // in the same frame.
+    this.props.selectOrientation(this.orientation);
+
     this.pieceDebug.prev = false;
     this.pieceDebug.next = false;
-    // this.dude.row = -1;
-    // this.dude.col = -1;
 
     // save the input from this frame
     // maintain the `isDown` state across frames
@@ -262,6 +279,7 @@ class App extends Component {
         pos={this.props.pos}
         dude={this.props.dude}
         currentPiece={this.props.currentPiece}
+        orientation={this.props.orientation}
         click={this.click}
         touchStart={this.touchStart}
         touchMove={this.touchMove}

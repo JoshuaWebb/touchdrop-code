@@ -1,12 +1,16 @@
 import { connect } from 'react-redux';
 
 import App from '../App';
-import { moveObjects, highlightDude, cyclePieces } from '../actions/index';
+import {
+  moveObjects, highlightDude, cyclePieces,
+  selectOrientation, nextPiece,
+} from '../actions/index';
 
 const mapStateToProps = state => ({
   pos: state.pos,
   dude: state.dude,
   currentPiece: state.currentPiece,
+  orientation: state.orientation,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -18,6 +22,12 @@ const mapDispatchToProps = dispatch => ({
   },
   cyclePieces: (param) => {
     dispatch(cyclePieces(param));
+  },
+  selectOrientation: (param) => {
+    dispatch(selectOrientation(param));
+  },
+  nextPiece: () => {
+    dispatch(nextPiece());
   },
 });
 

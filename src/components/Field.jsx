@@ -18,10 +18,11 @@ class Field extends Component {
       strokeWidth:1,
       stroke: '#FFFFFF',
     };
-    // TODO: take from outside / make less arbitrary
+    // TODO: take from outside / make less arbitrary :FieldPlacement
     const width = blockSizeInUnits * fieldWidthInBlocks;
     const height = blockSizeInUnits * fieldHeightInBlocks;
 
+    // TODO: centralise these :FieldPlacement
     const yOffset = 100;
     const xLeft = width / -2;
     const yTop = -yOffset-height;

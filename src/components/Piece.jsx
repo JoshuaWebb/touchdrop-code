@@ -36,7 +36,6 @@ const allPieceDataY = [
   [[0,0,1,1],[2,1,1,0],[2,2,1,1],[0,1,1,2]],  // S
 ];
 
-
 export const PIECE_COUNT = allPieceDataX.length;
 
 // TODO: cache these...
@@ -97,9 +96,9 @@ function getHeight (piece, orientation) {
 }
 
 const Piece = (props) => {
-  const { piece, orientation, blockSize, cx, cy } = props;
+  const { piece, orientation, blockSize, cx, cy, x, y } = props;
 
-  if (piece === -1)
+  if (piece === -1 || orientation === -1)
     return null;
 
   const pieceDataX = allPieceDataX[piece][orientation];
@@ -111,8 +110,15 @@ const Piece = (props) => {
   const minX = getMinX(piece, orientation);
   const minY = getMinY(piece, orientation);
 
-  const xOffset = (cx - minX * blockSize - (width  * blockSize / 2));
-  const yOffset = (cy - minY * blockSize - (height * blockSize / 2));
+  var xOffset;
+  var yOffset;
+  if (cx !== undefined && cy !== undefined) {
+    xOffset = (cx - minX * blockSize - (width  * blockSize / 2));
+    yOffset = (cy - minY * blockSize - (height * blockSize / 2));
+  } else {
+    xOffset = x - minX * blockSize;
+    yOffset = y - (minY + height - 1) * blockSize;
+  }
 
   return (
     pieceDataX.map((x, i) => {
