@@ -41,6 +41,10 @@ const Canvas = (props) => {
       id="game-canvas"
       preserveAspectRatio="xMidYMax slice"
       shapeRendering="crispEdges"
+      style={ {touchAction: 'none'} }
+      onTouchStart={props.touchStart}
+      onTouchMove={props.touchMove}
+      onTouchEnd={props.touchEnd}
       viewBox={viewBox}
     >
       <Background />

@@ -51,7 +51,7 @@ class Field extends Component {
       <g id="field">
         {grid}
         <rect
-          id="border"
+          id="field-border"
           style={borderStyle}
           x={xLeft}
           y={yTop}

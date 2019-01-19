@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 
 import Canvas from './components/Canvas';
 
+import { fieldWidthInBlocks, fieldHeightInBlocks,
+         blockSizeInUnits } from './constants'
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -30,10 +33,15 @@ class App extends Component {
       prev : false,
     };
 
+    this.touchStartedNearField = false;
+
     this.keydown = this.keydown.bind(this);
     this.keyup = this.keyup.bind(this);
     this.gameLoop = this.gameLoop.bind(this);
     this.click = this.click.bind(this);
+    this.touchStart = this.touchStart.bind(this);
+    this.touchMove = this.touchMove.bind(this);
+    this.touchEnd = this.touchEnd.bind(this);
   }
 
   processKey(button, isDown) {
@@ -93,6 +101,117 @@ class App extends Component {
     }
   }
 
+  // TODO: we probably will want to do these way more
+  // efficiently in the future. These are highly likely
+  // to cause a boat load of GC
+  canvasPoint(event) {
+    const svg = document.getElementById('game-canvas');
+    const point = svg.createSVGPoint();
+    point.x = event.clientX;
+    point.y = event.clientY;
+    const { x, y } = point.matrixTransform(svg.getScreenCTM().inverse());
+    return {x, y};
+  }
+
+  fieldPoint(canvasPoint) {
+    // TODO: don't hardcode these
+    const fieldX = -130;
+    const fieldY = -620;
+
+    const fcpx = canvasPoint.x - fieldX;
+    const fcpy = canvasPoint.y - fieldY;
+
+    const col = Math.floor(fcpx / blockSizeInUnits);
+    const row = Math.floor(fcpy / blockSizeInUnits);
+
+    return {col, row}
+  }
+
+  touchStart(event) {
+    var firstTouch = false;
+    for (let touch of event.changedTouches) {
+      if (touch.identifier === 0) {
+        firstTouch = true;
+      }
+    }
+
+    if (!firstTouch) {
+      return;
+    }
+
+    this.dude.row = -1;
+    this.dude.col = -1;
+    const cp = this.canvasPoint(event.touches[0]);
+    const fp = this.fieldPoint(cp);
+
+    // Allow the touch to start just outside the field,
+    // there shouldn't be a difference to the fudge-factor
+    // just because they missed on the "wrong side" of the
+    // edge cells. But not in another element.
+    const insideField = (
+      fp.col > -1 && fp.col < fieldWidthInBlocks &&
+      fp.row > -1 && fp.row < fieldHeightInBlocks
+    );
+
+    const closeToField = (
+      fp.col >= -1 && fp.col <= fieldWidthInBlocks &&
+      fp.row >= -1 && fp.row <= fieldHeightInBlocks
+    );
+
+    if (insideField || (event.target.id === "background" && closeToField))
+    {
+      event.preventDefault();
+      this.touchStartedNearField = true;
+    }
+
+    if (insideField)
+    {
+      this.dude.row = fp.row;
+      this.dude.col = fp.col;
+    }
+  }
+
+  touchMove(event) {
+    if (!this.touchStartedNearField) {
+      return;
+    }
+
+    const cp = this.canvasPoint(event.touches[0]);
+    const fp = this.fieldPoint(cp);
+
+    if (fp.col > -1 && fp.col < fieldWidthInBlocks &&
+        fp.row > -1 && fp.row < fieldHeightInBlocks)
+    {
+      this.dude.row = fp.row;
+      this.dude.col = fp.col;
+    }
+  }
+
+  touchEnd(event) {
+    var firstTouch = false;
+    for (let touch of event.changedTouches) {
+      if (touch.identifier === 0) {
+        firstTouch = true;
+      }
+    }
+
+    if (!firstTouch) {
+      return;
+    }
+
+    if (this.touchStartedNearField) {
+      event.preventDefault();
+    }
+
+    // TODO: this will probably be the trigger
+    // to attempt to drop the piece rather
+    // than clearing the row/col
+    this.dude.row = -1;
+    this.dude.col = -1;
+
+    this.touchStartedNearField = false;
+  }
+
   gameLoop() {
     this.props.moveObjects(this.newGameInput);
     this.props.highlightDude(this.dude);
@@ -100,8 +219,8 @@ class App extends Component {
 
     this.pieceDebug.prev = false;
     this.pieceDebug.next = false;
-    this.dude.row = -1;
-    this.dude.col = -1;
+    // this.dude.row = -1;
+    // this.dude.col = -1;
 
     // save the input from this frame
     // maintain the `isDown` state across frames
@@ -144,6 +263,9 @@ class App extends Component {
         dude={this.props.dude}
         currentPiece={this.props.currentPiece}
         click={this.click}
+        touchStart={this.touchStart}
+        touchMove={this.touchMove}
+        touchEnd={this.touchEnd}
         selectOrientation={this.selectOrientation}
       />
     );

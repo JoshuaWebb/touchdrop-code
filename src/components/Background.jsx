@@ -11,6 +11,7 @@ const Background = () => {
 
   return (
     <rect
+      id="background"
       style={style}
       x={width / -2}
       y={-height}
