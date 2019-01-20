@@ -3,12 +3,15 @@ import React, { Component } from 'react';
 import Canvas from './components/Canvas';
 
 import { fieldWidthInBlocks, fieldHeightInBlocks,
-         blockSizeInUnits } from './constants'
+         blockSizeInUnits } from './constants';
+
+import { placeBlock } from './components/Piece';
 
 class App extends Component {
   constructor(props) {
     super(props);
 
+    // internal state
     this.oldGameInput = {
       left : { isDown: false, halfTransitionCount: 0 },
       right: { isDown: false, halfTransitionCount: 0 },
@@ -33,7 +36,14 @@ class App extends Component {
       prev : false,
     };
 
-    this.orientation = -1;
+    this.field = this.props.blocks.map(r =>
+      [...r]
+    );
+
+    this.orientation = props.orientation;
+
+    // TODO: temporary; we need a "start" button
+    this.props.nextPiece();
 
     this.touchStartedNearField = false;
 
@@ -207,7 +217,6 @@ class App extends Component {
     if (this.touchStartedNearField) {
       event.preventDefault();
 
-      // TODO: check if we can place it here...
       this.place = true;
     }
 
@@ -218,15 +227,33 @@ class App extends Component {
     this.props.moveObjects(this.newGameInput);
     this.props.highlightDude(this.dude);
     this.props.cyclePieces(this.pieceDebug);
+    this.props.checkPlaceability(
+      this.dude.col, this.dude.row,
+      this.props.currentPiece, this.orientation,
+      this.field
+    );
 
-    // reset after placing
     if (this.place) {
+      var placed = false;
+      if (this.props.placeable) {
+        placeBlock(
+          this.dude.col, this.dude.row,
+          this.props.currentPiece, this.orientation,
+          this.field
+        );
+
+        this.props.placeBlock(this.field);
+        placed = true;
+      }
+
       this.dude.row = -1;
       this.dude.col = -1;
       this.orientation = -1;
       this.place = false;
 
-      this.props.nextPiece();
+      if (placed) {
+        this.props.nextPiece();
+      }
     }
 
     // Only do after potentially resetting above
@@ -280,6 +307,9 @@ class App extends Component {
         dude={this.props.dude}
         currentPiece={this.props.currentPiece}
         orientation={this.props.orientation}
+        placeable={this.props.placeable}
+        blocks={this.props.blocks}
+        blockCount={this.props.blockCount}
         click={this.click}
         touchStart={this.touchStart}
         touchMove={this.touchMove}

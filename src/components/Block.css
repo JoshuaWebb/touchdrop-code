@@ -13,3 +13,11 @@
 
   fill: Red;
 }
+
+.piece-block {
+  transition: none;
+}
+
+.cannot-place {
+  opacity: 0.5;
+}

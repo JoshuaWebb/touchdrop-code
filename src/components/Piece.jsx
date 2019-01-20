@@ -38,13 +38,75 @@ const allPieceDataY = [
 
 export const PIECE_COUNT = allPieceDataX.length;
 
+export function placeBlock(x, y, piece, orientation, field) {
+  const blocksX = allPieceDataX[piece][orientation];
+  const blocksY = allPieceDataY[piece][orientation];
+
+  const { xOffset, yOffset } = getGridOffset(x, y, piece, orientation);
+
+  for (var i = 0; i < blocksX.length; i++) {
+    const x2 = xOffset + blocksX[i];
+    const y2 = yOffset + blocksY[i];
+
+    field[y2][x2] = piece;
+  }
+}
+
+export function checkCollision(x, y, piece, orientation, field) {
+  const blocksX = allPieceDataX[piece][orientation];
+  const blocksY = allPieceDataY[piece][orientation];
+
+  const fieldWidth = field[0].length;
+  const fieldHeight = field.length;
+
+  const { xOffset, yOffset } = getGridOffset(x, y, piece, orientation);
+
+  for (var i = 0; i < blocksX.length; i++) {
+    const x2 = xOffset + blocksX[i];
+    const y2 = yOffset + blocksY[i];
+
+    if (x2 < 0) {
+      return true;
+    }
+
+    if (x2 >= fieldWidth || y2 >= fieldHeight) {
+      return true;
+    }
+
+    const row = field[y2];
+    if (row === undefined) {
+      continue;
+    }
+
+    if (row[x2] !== PIECE_NONE) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+// TODO: don't create a new object just to return
+// these values.
+function getGridOffset(x, y, piece, orientation) {
+  const height = getHeight(piece, orientation);
+
+  const minX = getMinX(piece, orientation);
+  const minY = getMinY(piece, orientation);
+
+  const xOffset = x - minX;
+  const yOffset = y - (minY + height - 1);
+
+  return { xOffset, yOffset };
+}
+
 // TODO: cache these...
 function getMinX(piece, orientation) {
   const blocks = allPieceDataX[piece][orientation];
 
   var min = blocks[0];
 
-  for (var i = 1; i < 4; i++) {
+  for (var i = 1; i < blocks.length; i++) {
     const block = blocks[i];
     min = min < block ? min : block;
   }
@@ -57,7 +119,7 @@ function getMinY(piece, orientation) {
 
   var min = blocks[0];
 
-  for (var i = 1; i < 4; i++) {
+  for (var i = 1; i < blocks.length; i++) {
     const block = blocks[i];
     min = min < block ? min : block;
   }
@@ -71,7 +133,7 @@ function getWidth (piece, orientation) {
   var min = blocks[0];
   var max = blocks[0];
 
-  for (var i = 1; i < 4; i++) {
+  for (var i = 1; i < blocks.length; i++) {
     const block = blocks[i];
     min = min < block ? min : block;
     max = max > block ? max : block;
@@ -86,7 +148,7 @@ function getHeight (piece, orientation) {
   var min = blocks[0];
   var max = blocks[0];
 
-  for (var i = 1; i < 4; i++) {
+  for (var i = 1; i < blocks.length; i++) {
     const block = blocks[i];
     min = min < block ? min : block;
     max = max > block ? max : block;
@@ -96,7 +158,7 @@ function getHeight (piece, orientation) {
 }
 
 const Piece = (props) => {
-  const { piece, orientation, blockSize, cx, cy, x, y } = props;
+  const { piece, orientation, blockSize, cx, cy, x, y, placeable } = props;
 
   if (piece === -1 || orientation === -1)
     return null;
@@ -128,6 +190,7 @@ const Piece = (props) => {
           key={i}
           x={xOffset + x * blockSize}
           y={yOffset + y * blockSize}
+          placeable={placeable}
           piece={piece}
           blockSize={blockSize} />
       );

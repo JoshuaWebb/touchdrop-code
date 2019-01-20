@@ -2,8 +2,13 @@ import { connect } from 'react-redux';
 
 import App from '../App';
 import {
-  moveObjects, highlightDude, cyclePieces,
-  selectOrientation, nextPiece,
+  moveObjects,
+  highlightDude,
+  cyclePieces,
+  selectOrientation,
+  nextPiece,
+  placeBlock,
+  checkPlaceability,
 } from '../actions/index';
 
 const mapStateToProps = state => ({
@@ -11,6 +16,9 @@ const mapStateToProps = state => ({
   dude: state.dude,
   currentPiece: state.currentPiece,
   orientation: state.orientation,
+  blocks: state.blocks,
+  blockCount: state.blockCount,
+  placeable: state.placeable,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -28,6 +36,12 @@ const mapDispatchToProps = dispatch => ({
   },
   nextPiece: () => {
     dispatch(nextPiece());
+  },
+  placeBlock: (x, y, piece, orientation, field) => {
+    dispatch(placeBlock(x, y, piece, orientation, field));
+  },
+  checkPlaceability: (x, y, piece, orientation, field) => {
+    dispatch(checkPlaceability(x, y, piece, orientation, field));
   },
 });
 

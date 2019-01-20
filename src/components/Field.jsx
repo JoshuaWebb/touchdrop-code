@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import './Field.css';
+
+import Block from './Block';
 
 import { fieldWidthInBlocks, fieldHeightInBlocks,
          blockSizeInUnits } from '../constants'
@@ -7,9 +8,11 @@ import { fieldWidthInBlocks, fieldHeightInBlocks,
 class Field extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
-    const { dude } = this.props;
+    const { dude, blockCount } = this.props;
+
     return dude.row !== nextProps.dude.row ||
-           dude.col !== nextProps.dude.col;
+           dude.col !== nextProps.dude.col ||
+           blockCount !== nextProps.blockCount;
   }
 
   render() {
@@ -34,15 +37,16 @@ class Field extends Component {
     for (var r = 0; r < fieldHeightInBlocks; r++) {
       for (var c = 0; c < fieldWidthInBlocks; c++) {
         const id = r * fieldWidthInBlocks + c;
-        var gridBlock = <rect
+        const currentBlock = this.props.blocks[r][c];
+        const gridBlock =
+          <Block
             id={id}
             key={id}
             x={xLeft + c * blockSizeInUnits}
             y={yTop + r * blockSizeInUnits}
-            width={blockSizeInUnits}
-            height={blockSizeInUnits}
-            onClick={this.props.click.bind(this, r, c)}
-            className={"grid-block " + ((r === selectedRow && c === selectedCol) ? "grid-block-flash" : "") }
+            blockSize={blockSizeInUnits}
+            piece={currentBlock}
+            flash={r === selectedRow && c === selectedCol }
           />;
         grid.push(gridBlock);
       }

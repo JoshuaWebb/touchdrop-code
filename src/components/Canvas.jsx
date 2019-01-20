@@ -53,6 +53,7 @@ const Canvas = (props) => {
         y={pieceY}
         piece={props.currentPiece}
         orientation={props.orientation}
+        placeable={props.placeable}
         blockSize={blockSizeInUnits} />
     : null;
 
@@ -69,7 +70,9 @@ const Canvas = (props) => {
     >
       <Background />
       <Field dude={props.dude}
-             click={props.click} />
+             click={props.click}
+             blocks={props.blocks}
+             blockCount={props.blockCount} />
       {activePiece}
       {orientationSelectors}
       <Ball pos={props.pos} />
