@@ -3,9 +3,9 @@ import React, { Component } from 'react';
 import Canvas from './components/Canvas';
 
 import { fieldWidthInBlocks, fieldHeightInBlocks,
-         blockSizeInUnits } from './constants';
+         blockSizeInUnits, hiddenHeight } from './constants';
 
-import { placeBlock } from './components/Piece';
+import { placeBlock, PIECE_NONE } from './components/Piece';
 
 class App extends Component {
   constructor(props) {
@@ -36,9 +36,19 @@ class App extends Component {
       prev : false,
     };
 
-    this.field = this.props.blocks.map(r =>
-      [...r]
-    );
+    // TODO: we need some buffer at the top to account for placing
+    // pieces at the top of the field that extend off the top.
+    // The buffer should not be rendered.
+    this.field = {
+      blocks: this.props.field.blocks.map(r =>
+        [...r]
+      ),
+      hiddenBlocks: this.props.field.hiddenBlocks.map(r =>
+        [...r]
+      ),
+      lineClearFlags: [...this.props.field.lineClearFlags],
+      hiddenLineClearFlags: [...this.props.field.hiddenLineClearFlags],
+    };
 
     this.orientation = props.orientation;
 
@@ -223,6 +233,101 @@ class App extends Component {
     this.touchStartedNearField = false;
   }
 
+  isLineFilled(line) {
+    const lineLength = line.length;
+    for (let col = 0; col < lineLength; col++) {
+      const block = line[col];
+      if (block === PIECE_NONE) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  setLineFlag(row, field, flag) {
+    if (row >= 0) {
+      field.lineClearFlags[row] = flag;
+    } else {
+      field.hiddenLineClearFlags[row * - 1 - 1] = flag;
+    }
+  }
+
+  getLineFlag(row, field) {
+    return field.lineClearFlags[row] || field.hiddenLineClearFlags[row * - 1 - 1];
+  }
+
+  downFloatingBlocks(field) {
+    const fieldHeight = field.blocks.length;
+    const fieldWidth = field.blocks[0].length;
+
+    var y = fieldHeight - 1;
+
+    for (let i = hiddenHeight * -1; i < fieldHeight; i++) {
+      if (this.getLineFlag(y, field)) {
+        for (let k = y; k > hiddenHeight * -1; k--) {
+          const rowUp = field.blocks[k-1] || field.hiddenBlocks[(k-1)*-1 - 1];
+          const row = field.blocks[k] || field.hiddenBlocks[k * -1 - 1]
+          for (let l = 0; l < fieldWidth; l++) {
+            const blk = rowUp === undefined ? PIECE_NONE : rowUp[l];
+            row[l] = blk;
+            this.setLineFlag(k, field, this.getLineFlag(k - 1, field));
+          }
+        }
+
+        // clear the top (we really only need to do this once)
+        for (let l = 0; l < fieldWidth; l++) {
+          const topRow = field.hiddenBlocks[hiddenHeight - 1];
+          topRow[l] = PIECE_NONE;
+        }
+
+      } else {
+        y--;
+      }
+    }
+  }
+
+  doLineClears(field) {
+    var linesCleared = 0;
+    var firstLine = -1;
+    const fieldHeight = field.blocks.length;
+
+    for (let r = hiddenHeight * -1; r < 0; r++) {
+      const row = field.hiddenBlocks[r * -1 - 1];
+      const filled = this.isLineFilled(row);
+      if (filled) {
+        this.setLineFlag(r, field, true);
+        linesCleared++;
+      }
+    }
+
+    for(let r = 0; r < fieldHeight; r++) {
+      const row = field.blocks[r];
+      const filled = this.isLineFilled(row);
+
+      if (filled) {
+        const rowLength = row.length;
+        for (let c = 0; c < rowLength; c++) {
+          row[c] = PIECE_NONE;
+        }
+        linesCleared++;
+        this.setLineFlag(r, field, true);
+
+        if (firstLine === -1) {
+          firstLine = r;
+        }
+      }
+    }
+
+    // TODO: split out and do later
+    // after some frames for animation purposes?
+    if (linesCleared > 0) {
+      this.downFloatingBlocks(field);
+    }
+
+    return linesCleared;
+  }
+
   gameLoop() {
     this.props.moveObjects(this.newGameInput);
     this.props.highlightDude(this.dude);
@@ -236,22 +341,36 @@ class App extends Component {
     if (this.place) {
       var placed = false;
       if (this.props.placeable) {
+        // update our internal field
         placeBlock(
           this.dude.col, this.dude.row,
           this.props.currentPiece, this.orientation,
           this.field
         );
 
+        var lines = this.doLineClears(this.field);
+        // TODO: count lines cleared
+
+        // TODO: line clear delay / animation??
+        // broadcast to everyone else
         this.props.placeBlock(this.field);
+
+
         placed = true;
       }
 
-      this.dude.row = -1;
-      this.dude.col = -1;
-      this.orientation = -1;
+      // TODO: punishment for trying to drop in a
+      //. non-placeable space? or do we just leave
+      // it hanging as this currently does.
       this.place = false;
 
+      // TODO: allow placing it as soon as they try
+      // to rotate it if that becomes a valid placement?
+
       if (placed) {
+        this.dude.row = -1;
+        this.dude.col = -1;
+        this.orientation = -1;
         this.props.nextPiece();
       }
     }
@@ -308,7 +427,7 @@ class App extends Component {
         currentPiece={this.props.currentPiece}
         orientation={this.props.orientation}
         placeable={this.props.placeable}
-        blocks={this.props.blocks}
+        blocks={this.props.field.blocks}
         blockCount={this.props.blockCount}
         click={this.click}
         touchStart={this.touchStart}

@@ -16,7 +16,7 @@ const mapStateToProps = state => ({
   dude: state.dude,
   currentPiece: state.currentPiece,
   orientation: state.orientation,
-  blocks: state.blocks,
+  field: state.field,
   blockCount: state.blockCount,
   placeable: state.placeable,
 });

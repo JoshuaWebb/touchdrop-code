@@ -21,20 +21,23 @@ function getChangedRows(oldField, newField) {
 }
 
 function placeBlock(state, data) {
-  const newField = data.field;
-  var changedRows = getChangedRows(state.blocks, newField);
+  const newField = data.field.blocks;
+  var changedRows = getChangedRows(state.field.blocks, newField);
   if (changedRows.length === 0) {
     return state;
   }
 
-  const blocks = [...state.blocks];
+  const blocks = [...state.field.blocks];
   for (let r of changedRows) {
     blocks[r] = [...newField[r]];
   }
 
   return {
     ...state,
-    blocks: blocks,
+    field: {
+      ...state.field,
+      blocks: blocks,
+    },
     blockCount: state.blockCount + 1,
   };
 }

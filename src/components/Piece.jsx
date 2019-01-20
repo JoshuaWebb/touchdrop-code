@@ -48,7 +48,8 @@ export function placeBlock(x, y, piece, orientation, field) {
     const x2 = xOffset + blocksX[i];
     const y2 = yOffset + blocksY[i];
 
-    field[y2][x2] = piece;
+    const row = field.blocks[y2] || field.hiddenBlocks[y2 * -1 - 1];
+    row[x2] = piece;
   }
 }
 
@@ -56,7 +57,7 @@ export function checkCollision(x, y, piece, orientation, field) {
   const blocksX = allPieceDataX[piece][orientation];
   const blocksY = allPieceDataY[piece][orientation];
 
-  const fieldWidth = field[0].length;
+  const fieldWidth = field.blocks[0].length;
   const fieldHeight = field.length;
 
   const { xOffset, yOffset } = getGridOffset(x, y, piece, orientation);
@@ -73,7 +74,7 @@ export function checkCollision(x, y, piece, orientation, field) {
       return true;
     }
 
-    const row = field[y2];
+    const row = field.blocks[y2] || field.hiddenBlocks[y2 * -1 - 1];
     if (row === undefined) {
       continue;
     }

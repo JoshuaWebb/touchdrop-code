@@ -19,7 +19,7 @@ import checkPlaceability from './checkPlaceability';
 // TODO: I think this is probably bad style to be in the component...
 import { PIECE_NONE } from '../components/Piece';
 
-import { fieldWidthInBlocks, fieldHeightInBlocks } from '../constants'
+import { fieldWidthInBlocks, fieldHeightInBlocks, hiddenHeight } from '../constants'
 
 const initialState = {
   pos: {
@@ -34,8 +34,16 @@ const initialState = {
   orientation: -1,
   placeable: false,
   blockCount: 0,
-  blocks: Array(fieldHeightInBlocks).fill(0).map(r =>
-            Array(fieldWidthInBlocks).fill(PIECE_NONE)),
+  field: {
+    blocks :
+      Array(fieldHeightInBlocks).fill(0).map(r =>
+        Array(fieldWidthInBlocks).fill(PIECE_NONE)),
+    hiddenBlocks:
+      Array(hiddenHeight).fill(0).map(r =>
+        Array(fieldWidthInBlocks).fill(PIECE_NONE)),
+    lineClearFlags: Array(fieldHeightInBlocks).fill(false),
+    hiddenLineClearFlags: Array(hiddenHeight).fill(false),
+  },
 };
 
 function reducer(state = initialState, action) {
