@@ -11,6 +11,7 @@ export const PIECE_T = 4;
 export const PIECE_J = 5;
 export const PIECE_S = 6;
 
+export const ORIENTATION_NONE  = -1;
 export const ORIENTATION_UP    = 0;
 export const ORIENTATION_RIGHT = 1;
 export const ORIENTATION_DOWN  = 2;
@@ -166,7 +167,7 @@ function getHeight (piece, orientation) {
 const Piece = (props) => {
   const { piece, orientation, blockSize, cx, cy, x, y, placeable } = props;
 
-  if (piece === -1 || orientation === -1)
+  if (piece === PIECE_NONE || orientation === ORIENTATION_NONE)
     return null;
 
   const pieceDataX = allPieceDataX[piece][orientation];

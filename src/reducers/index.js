@@ -17,7 +17,7 @@ import placeBlock from './placeBlock';
 import checkPlaceability from './checkPlaceability';
 
 // TODO: I think this is probably bad style to be in the component...
-import { PIECE_NONE } from '../components/Piece';
+import { PIECE_NONE, ORIENTATION_NONE } from '../components/Piece';
 
 import { fieldWidthInBlocks, fieldHeightInBlocks, hiddenHeight } from '../constants'
 
@@ -31,13 +31,14 @@ const initialState = {
     col: -1,
   },
   currentPiece: PIECE_NONE,
-  orientation: -1,
+  orientation: ORIENTATION_NONE,
   placeable: false,
   blockCount: 0,
   field: {
     blocks :
       Array(fieldHeightInBlocks).fill(0).map(r =>
         Array(fieldWidthInBlocks).fill(PIECE_NONE)),
+    // TODO: Make these only internal state in App.js ?
     hiddenBlocks:
       Array(hiddenHeight).fill(0).map(r =>
         Array(fieldWidthInBlocks).fill(PIECE_NONE)),

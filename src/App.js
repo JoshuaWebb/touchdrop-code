@@ -5,7 +5,7 @@ import Canvas from './components/Canvas';
 import { fieldWidthInBlocks, fieldHeightInBlocks,
          blockSizeInUnits, hiddenHeight } from './constants';
 
-import { placeBlock, PIECE_NONE } from './components/Piece';
+import { placeBlock, PIECE_NONE, ORIENTATION_NONE } from './components/Piece';
 
 class App extends Component {
   constructor(props) {
@@ -370,7 +370,7 @@ class App extends Component {
       if (placed) {
         this.dude.row = -1;
         this.dude.col = -1;
-        this.orientation = -1;
+        this.orientation = ORIENTATION_NONE;
         this.props.nextPiece();
       }
     }
