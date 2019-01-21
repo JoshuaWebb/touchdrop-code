@@ -10,12 +10,20 @@ function checkPlaceability(state, data) {
       x !== -1 &&
       y !== -1
   ) {
-    // TODO: check if the piece is allowed to be dropped here...
-    // i.e. is it resting on something, can the piece actually
-    // reach here or is the path to this position blocked.
+    // TODO: check if the piece has a valid path to get
+    // to this position from the top.
+    //
+    // Idea: Instead of a consant reference point at the top,
+    // ave a regular piece dropping slowly and move it
+    // left/right as the player drags the destination left/right
+    // if the regular piece becomes obstructed, the player can
+    // no longer move it in that direction, and if the piece
+    // lands in a lockable position before the player lets go
+    // lock the piece. The dragging should assume optimal play
+    // including valid spins/kicks.
     const collides = checkCollision(x, y, piece, orientation, field);
-
-    newPlaceable = !collides;
+    const supported = !collides && checkCollision(x, y + 1, piece, orientation, field);
+    newPlaceable = !collides && supported;
   }
 
   if (oldPlaceable === newPlaceable) {

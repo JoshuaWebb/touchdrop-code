@@ -66,19 +66,24 @@ export function checkCollision(x, y, piece, orientation, field) {
     const x2 = xOffset + blocksX[i];
     const y2 = yOffset + blocksY[i];
 
+    // Off the left edge of the field
     if (x2 < 0) {
       return true;
     }
 
+    // Off the right / bottom edge of the field
     if (x2 >= fieldWidth || y2 >= fieldHeight) {
       return true;
     }
 
     const row = field.blocks[y2] || field.hiddenBlocks[y2 * -1 - 1];
+
+    // Off the top edge (past the hidden blocks) of the field
     if (row === undefined) {
-      continue;
+      return true;
     }
 
+    // Collides with a previously placed block
     if (row[x2] !== PIECE_NONE) {
       return true;
     }
