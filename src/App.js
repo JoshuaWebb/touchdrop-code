@@ -294,34 +294,39 @@ class App extends Component {
     return true;
   }
 
-  setLineFlag(row, field, flag) {
+  setLineClearedFlag(row, field, flag) {
     if (row >= 0) {
       field.lineClearFlags[row] = flag;
     } else {
-      field.hiddenLineClearFlags[row * - 1 - 1] = flag;
+      field.hiddenLineClearFlags[(row * -1) - 1] = flag;
     }
   }
 
-  getLineFlag(row, field) {
-    return field.lineClearFlags[row] || field.hiddenLineClearFlags[row * - 1 - 1];
+  getLineClearedFlag(row, field) {
+    return field.lineClearFlags[row] || field.hiddenLineClearFlags[(row * -1) - 1];
   }
 
+  getRow(row, field) {
+    return field.blocks[row] || field.hiddenBlocks[(row * -1) - 1];
+  }
+
+  // NOTE: this was originally ported pretty directly from Nullpomino
   downFloatingBlocks(field) {
     const fieldHeight = field.blocks.length;
     const fieldWidth = field.blocks[0].length;
 
     var y = fieldHeight - 1;
-
     for (let i = hiddenHeight * -1; i < fieldHeight; i++) {
-      if (this.getLineFlag(y, field)) {
+      if (this.getLineClearedFlag(y, field)) {
         for (let k = y; k > hiddenHeight * -1; k--) {
-          const rowUp = field.blocks[k-1] || field.hiddenBlocks[(k-1)*-1 - 1];
-          const row = field.blocks[k] || field.hiddenBlocks[k * -1 - 1]
+          const rowUp = this.getRow(k-1, field);
+          const row   = this.getRow(k, field);
           for (let l = 0; l < fieldWidth; l++) {
             const blk = rowUp === undefined ? PIECE_NONE : rowUp[l];
             row[l] = blk;
-            this.setLineFlag(k, field, this.getLineFlag(k - 1, field));
           }
+
+          this.setLineClearedFlag(k, field, this.getLineClearedFlag(k-1, field));
         }
 
         // clear the top (we really only need to do this once)
@@ -329,7 +334,6 @@ class App extends Component {
           const topRow = field.hiddenBlocks[hiddenHeight - 1];
           topRow[l] = PIECE_NONE;
         }
-
       } else {
         y--;
       }
@@ -341,17 +345,8 @@ class App extends Component {
     var firstLine = -1;
     const fieldHeight = field.blocks.length;
 
-    for (let r = hiddenHeight * -1; r < 0; r++) {
-      const row = field.hiddenBlocks[r * -1 - 1];
-      const filled = this.isLineFilled(row);
-      if (filled) {
-        this.setLineFlag(r, field, true);
-        linesCleared++;
-      }
-    }
-
-    for(let r = 0; r < fieldHeight; r++) {
-      const row = field.blocks[r];
+    for(let r = hiddenHeight * -1; r < fieldHeight; r++) {
+      const row = this.getRow(r, field);
       const filled = this.isLineFilled(row);
 
       if (filled) {
@@ -360,7 +355,7 @@ class App extends Component {
           row[c] = PIECE_NONE;
         }
         linesCleared++;
-        this.setLineFlag(r, field, true);
+        this.setLineClearedFlag(r, field, true);
 
         if (firstLine === -1) {
           firstLine = r;
