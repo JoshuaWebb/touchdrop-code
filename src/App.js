@@ -2,10 +2,16 @@ import React, { Component } from 'react';
 
 import Canvas from './components/Canvas';
 
-import { fieldWidthInBlocks, fieldHeightInBlocks,
-         blockSizeInUnits, hiddenHeight } from './constants';
+import {
+  fieldWidthInBlocks, fieldHeightInBlocks,
+  blockSizeInUnits, hiddenHeight,
+} from './constants';
 
-import { placeBlock, PIECE_NONE, ORIENTATION_NONE } from './components/Piece';
+import {
+  placeBlock, PIECE_NONE, ORIENTATION_NONE,
+  ORIENTATION_UP, ORIENTATION_RIGHT,
+  ORIENTATION_DOWN, ORIENTATION_LEFT,
+} from './components/Piece';
 
 class App extends Component {
   constructor(props) {
@@ -53,6 +59,8 @@ class App extends Component {
       hiddenLineClearFlags: [...this.props.field.hiddenLineClearFlags],
     };
 
+    this.initialiseLayout();
+
     this.orientation = props.orientation;
 
     // TODO: temporary; we need a "start" button
@@ -62,7 +70,6 @@ class App extends Component {
     this.keydown = this.keydown.bind(this);
     this.keyup = this.keyup.bind(this);
     this.gameLoop = this.gameLoop.bind(this);
-    this.click = this.click.bind(this);
     this.selectOrientation = this.selectOrientation.bind(this);
     this.updateOrientation = this.updateOrientation.bind(this);
     this.dragMove = this.dragMove.bind(this);
@@ -81,16 +88,57 @@ class App extends Component {
     this.mouseUp   = this.mouseUp.bind(this);
   }
 
+  initialiseLayout() {
+    //
+    // Field
+    //
+    const yOffset = 100;
+    const fieldWidth  = blockSizeInUnits * fieldWidthInBlocks;
+    const fieldHeight = blockSizeInUnits * fieldHeightInBlocks;
+
+    this.fieldDimensions = {
+      x: fieldWidth / -2,
+      y: -yOffset-fieldHeight,
+      blockSize: blockSizeInUnits,
+      rows: fieldHeightInBlocks,
+      cols: fieldWidthInBlocks,
+      width: fieldWidth,
+      height: fieldHeight,
+    };
+
+    //
+    // Orientation selectors
+    //
+    const orientations = [
+      ORIENTATION_LEFT,
+      ORIENTATION_UP,
+      ORIENTATION_RIGHT,
+      ORIENTATION_DOWN
+    ];
+
+    const osMargin = 16;
+    const osSize = 70;
+    const osYStart = -yOffset + osMargin;
+
+    const allOsWidth = (osSize * orientations.length + osMargin * (orientations.length - 1));
+
+    // Center against the field
+    const osXStart = (this.fieldDimensions.x - this.fieldDimensions.width / -2) + (allOsWidth / -2);
+
+    this.orientationSelectors = orientations.map((orientation, i) => ({
+      x: osXStart + (osSize + osMargin)*i,
+      y: osYStart,
+      width: osSize,
+      height: osSize,
+      orientation: orientation,
+    }));
+  }
+
   processKey(button, isDown) {
     if (button.isDown !== isDown) {
       button.halfTransitionCount++;
     }
     button.isDown = isDown;
-  }
-
-  click(row, col) {
-    this.dude.row = row;
-    this.dude.col = col;
   }
 
   // TODO: We should change the name of one of these
@@ -153,12 +201,8 @@ class App extends Component {
   }
 
   fieldPoint(canvasPoint) {
-    // TODO: centralise these :FieldPlacement
-    const fieldX = -130;
-    const fieldY = -620;
-
-    const fcpx = canvasPoint.x - fieldX;
-    const fcpy = canvasPoint.y - fieldY;
+    const fcpx = canvasPoint.x - this.fieldDimensions.x;
+    const fcpy = canvasPoint.y - this.fieldDimensions.y;
 
     const col = Math.floor(fcpx / blockSizeInUnits);
     const row = Math.floor(fcpy / blockSizeInUnits);
@@ -167,28 +211,15 @@ class App extends Component {
   }
 
   updateOrientation(canvasPoint) {
-    // TODO: This is terrible! :FieldPlacement
-    // TODO: PROOF OF CONCEPT :FieldPlacement
-    const osSize = 70;
-    const osMargin = 16;
-    const allOsWidth = (osSize * 4 + osMargin * (3));
-    const osXStart = allOsWidth / -2;
-    const osYStart = -100 + osMargin;
-
     const { x, y } = canvasPoint;
 
-    if (y < osYStart || y > osYStart + osSize) {
-      return;
-    }
-
-    if        (x > osXStart                         && x < osXStart + osSize) {
-      this.selectOrientation(3);
-    } else if (x > osXStart + osSize + osMargin     && x < osXStart + osSize*2 + osMargin) {
-      this.selectOrientation(0);
-    } else if (x > osXStart + osSize*2 + osMargin*2 && x < osXStart + osSize*3 + osMargin*2) {
-      this.selectOrientation(1);
-    } else if (x > osXStart + osSize*3 + osMargin*3 && x < osXStart + osSize*4 + osMargin*3) {
-      this.selectOrientation(2);
+    for (var i = 0; i < this.orientationSelectors.length; i++) {
+      const os = this.orientationSelectors[i];
+      if (y > os.y && y < os.y + os.height &&
+          x > os.x && x < os.x + os.width) {
+        this.selectOrientation(os.orientation);
+        break;
+      }
     }
   }
 
@@ -442,12 +473,13 @@ class App extends Component {
       <Canvas
         pos={this.props.pos}
         dude={this.props.dude}
+        orientationSelectors={this.orientationSelectors}
+        fieldDimensions={this.fieldDimensions}
         currentPiece={this.props.currentPiece}
         orientation={this.props.orientation}
         placeable={this.props.placeable}
         blocks={this.props.field.blocks}
         blockCount={this.props.blockCount}
-        click={this.click}
         touchStart={this.touchStart}
         touchMove={this.touchMove}
         touchEnd={this.touchEnd}

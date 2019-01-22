@@ -8,41 +8,27 @@ import OrientationSelector from './OrientationSelector';
 
 import { blockSizeInUnits } from '../constants';
 
-import { ORIENTATION_UP, ORIENTATION_RIGHT, ORIENTATION_DOWN, ORIENTATION_LEFT }
-  from './Piece'
-
-const orientations = [
-  ORIENTATION_LEFT,
-  ORIENTATION_UP,
-  ORIENTATION_RIGHT,
-  ORIENTATION_DOWN
-];
-
 const Canvas = (props) => {
   const gameHeight = 1200;
   const viewBox = [window.innerWidth / -2, -gameHeight, window.innerWidth, gameHeight];
 
-  // TODO: move to a collection component?
-  const osSize = 70;
-  const osMargin = 16;
-  const allOsWidth = (osSize * orientations.length + osMargin * (orientations.length - 1));
-  const osXStart = allOsWidth / -2;
-  const osYStart = -100 + osMargin;
-
-  const orientationSelectors = orientations.map((orientation, i) =>
+  const orientationSelectors = props.orientationSelectors.map((os, i) =>
     <OrientationSelector
       key={`ori${i}`}
-      x={osXStart + (osSize + osMargin)*i} y={osYStart}
-      width={osSize} height={osSize}
-      orientation={orientation}
+      x={os.x} y={os.y}
+      width={os.width} height={os.height}
+      orientation={os.orientation}
       piece={props.currentPiece}
-      selected={props.orientation === orientation}
-      selectOrientation={props.selectOrientation} />
+      selected={props.orientation === os.orientation}
+    />
   );
 
-  // TODO: centralise these :FieldPlacement
-  const fieldX = -130;
-  const fieldY = -620;
+  const {
+    x: fieldX, y: fieldY,
+    width: fieldWidth, height: fieldHeight,
+    rows: fieldRows, cols: fieldCols,
+    blockSize,
+  } = props.fieldDimensions;
 
   const pieceX = fieldX + props.dude.col * blockSizeInUnits;
   const pieceY = fieldY + props.dude.row * blockSizeInUnits;
@@ -72,10 +58,17 @@ const Canvas = (props) => {
       viewBox={viewBox}
     >
       <Background />
-      <Field dude={props.dude}
-             click={props.click}
-             blocks={props.blocks}
-             blockCount={props.blockCount} />
+      <Field
+        dude={props.dude}
+        x={fieldX}
+        y={fieldY}
+        width={fieldWidth}
+        height={fieldHeight}
+        blockSize={blockSize}
+        rows={fieldRows}
+        cols={fieldCols}
+        blocks={props.blocks}
+        blockCount={props.blockCount} />
       {activePiece}
       {orientationSelectors}
       <Ball pos={props.pos} />

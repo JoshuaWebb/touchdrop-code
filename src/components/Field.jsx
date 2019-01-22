@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 
 import Block from './Block';
 
-import { fieldWidthInBlocks, fieldHeightInBlocks,
-         blockSizeInUnits } from '../constants'
-
 class Field extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -21,30 +18,30 @@ class Field extends Component {
       strokeWidth:1,
       stroke: '#FFFFFF',
     };
-    // TODO: take from outside / make less arbitrary :FieldPlacement
-    const width = blockSizeInUnits * fieldWidthInBlocks;
-    const height = blockSizeInUnits * fieldHeightInBlocks;
 
-    // TODO: centralise these :FieldPlacement
-    const yOffset = 100;
-    const xLeft = width / -2;
-    const yTop = -yOffset-height;
-
-    var selectedRow = this.props.dude.row;
-    var selectedCol = this.props.dude.col;
+    const {
+      x, y,
+      width, height,
+      blockSize,
+      rows, cols,
+      dude: {
+        row: selectedRow,
+        col: selectedCol
+      }
+    } = this.props;
 
     var grid = [];
-    for (var r = 0; r < fieldHeightInBlocks; r++) {
-      for (var c = 0; c < fieldWidthInBlocks; c++) {
-        const id = r * fieldWidthInBlocks + c;
+    for (var r = 0; r < rows; r++) {
+      for (var c = 0; c < cols; c++) {
+        const id = r * cols + c;
         const currentBlock = this.props.blocks[r][c];
         const gridBlock =
           <Block
             id={id}
             key={id}
-            x={xLeft + c * blockSizeInUnits}
-            y={yTop + r * blockSizeInUnits}
-            blockSize={blockSizeInUnits}
+            x={x + c * blockSize}
+            y={y + r * blockSize}
+            blockSize={blockSize}
             piece={currentBlock}
             flash={r === selectedRow && c === selectedCol }
           />;
@@ -58,8 +55,8 @@ class Field extends Component {
         <rect
           id="field-border"
           style={borderStyle}
-          x={xLeft}
-          y={yTop}
+          x={x}
+          y={y}
           width={width}
           height={height}
           pointerEvents="none"
