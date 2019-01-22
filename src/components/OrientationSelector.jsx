@@ -15,14 +15,14 @@ const selectedStyle = {
 };
 
 const OrientationSelector = (props) => {
-  const { piece, orientation, selected, selectOrientation } = props;
+  const { piece, orientation, selected } = props;
 
   const padding = 4;
   const cornerRadius = 6;
   const blockSize = (props.width - padding * 2) / 4;
 
   return (
-    <g onMouseDown={selectOrientation.bind(this, orientation)} >
+    <g>
       <rect
         fill="transparent"
         x={props.x}

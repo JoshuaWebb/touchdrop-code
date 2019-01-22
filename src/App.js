@@ -26,6 +26,9 @@ class App extends Component {
       down : { isDown: false, halfTransitionCount: 0 },
     };
 
+    this.activeTouches = 0;
+    this.mouseIsDown = false;
+
     this.dude = {
       row : -1,
       col : -1,
@@ -55,16 +58,27 @@ class App extends Component {
     // TODO: temporary; we need a "start" button
     this.props.nextPiece();
 
-    this.touchStartedNearField = false;
 
     this.keydown = this.keydown.bind(this);
     this.keyup = this.keyup.bind(this);
     this.gameLoop = this.gameLoop.bind(this);
     this.click = this.click.bind(this);
     this.selectOrientation = this.selectOrientation.bind(this);
-    this.touchStart = this.touchStart.bind(this);
+    this.updateOrientation = this.updateOrientation.bind(this);
+    this.dragMove = this.dragMove.bind(this);
+    this.dragEnd = this.dragEnd.bind(this);
+    this.mouseDown = this.mouseDown.bind(this);
+    this.mouseMove = this.mouseMove.bind(this);
+    this.mouseUp   = this.mouseUp.bind(this);
     this.touchMove = this.touchMove.bind(this);
     this.touchEnd = this.touchEnd.bind(this);
+    // we don't need any special logic for tracking
+    // the initial touches at the moment.
+    this.touchStart = this.touchMove;
+
+    this.mouseDown = this.mouseDown.bind(this);
+    this.mouseMove = this.mouseMove.bind(this);
+    this.mouseUp   = this.mouseUp.bind(this);
   }
 
   processKey(button, isDown) {
@@ -152,58 +166,36 @@ class App extends Component {
     return {col, row};
   }
 
-  touchStart(event) {
-    var firstTouch = false;
-    for (let touch of event.changedTouches) {
-      if (touch.identifier === 0) {
-        firstTouch = true;
-      }
-    }
+  updateOrientation(canvasPoint) {
+    // TODO: This is terrible! :FieldPlacement
+    // TODO: PROOF OF CONCEPT :FieldPlacement
+    const osSize = 70;
+    const osMargin = 16;
+    const allOsWidth = (osSize * 4 + osMargin * (3));
+    const osXStart = allOsWidth / -2;
+    const osYStart = -100 + osMargin;
 
-    if (!firstTouch) {
+    const { x, y } = canvasPoint;
+
+    if (y < osYStart || y > osYStart + osSize) {
       return;
     }
 
-    this.dude.row = -1;
-    this.dude.col = -1;
-    const cp = this.canvasPoint(event.touches[0]);
-    const fp = this.fieldPoint(cp);
-
-    // Allow the touch to start just outside the field,
-    // there shouldn't be a difference to the fudge-factor
-    // just because they missed on the "wrong side" of the
-    // edge cells. But not in another element.
-    const insideField = (
-      fp.col > -1 && fp.col < fieldWidthInBlocks &&
-      fp.row > -1 && fp.row < fieldHeightInBlocks
-    );
-
-    const closeToField = (
-      fp.col >= -1 && fp.col <= fieldWidthInBlocks &&
-      fp.row >= -1 && fp.row <= fieldHeightInBlocks
-    );
-
-    if (insideField || (event.target.id === "background" && closeToField))
-    {
-      event.preventDefault();
-      this.touchStartedNearField = true;
-    }
-
-    if (insideField)
-    {
-      this.dude.row = fp.row;
-      this.dude.col = fp.col;
+    if        (x > osXStart                         && x < osXStart + osSize) {
+      this.selectOrientation(3);
+    } else if (x > osXStart + osSize + osMargin     && x < osXStart + osSize*2 + osMargin) {
+      this.selectOrientation(0);
+    } else if (x > osXStart + osSize*2 + osMargin*2 && x < osXStart + osSize*3 + osMargin*2) {
+      this.selectOrientation(1);
+    } else if (x > osXStart + osSize*3 + osMargin*3 && x < osXStart + osSize*4 + osMargin*3) {
+      this.selectOrientation(2);
     }
   }
 
-  touchMove(event) {
-    if (!this.touchStartedNearField) {
-      return;
-    }
+  dragMove(canvasPoint) {
+    this.updateOrientation(canvasPoint);
 
-    const cp = this.canvasPoint(event.touches[0]);
-    const fp = this.fieldPoint(cp);
-
+    const fp = this.fieldPoint(canvasPoint);
     if (fp.col > -1 && fp.col < fieldWidthInBlocks &&
         fp.row > -1 && fp.row < fieldHeightInBlocks)
     {
@@ -212,25 +204,51 @@ class App extends Component {
     }
   }
 
-  touchEnd(event) {
-    var firstTouch = false;
-    for (let touch of event.changedTouches) {
-      if (touch.identifier === 0) {
-        firstTouch = true;
-      }
-    }
-
-    if (!firstTouch) {
-      return;
-    }
-
-    if (this.touchStartedNearField) {
-      event.preventDefault();
-
+  dragEnd() {
+    if (this.activeTouches === 0 && !this.mouseIsDown) {
       this.place = true;
     }
+  }
 
-    this.touchStartedNearField = false;
+  mouseDown(event) {
+    event.preventDefault();
+    this.mouseIsDown = true;
+
+    const cp = this.canvasPoint(event);
+    this.dragMove(cp);
+  }
+
+  mouseMove(event) {
+    event.preventDefault();
+    if (this.mouseIsDown) {
+      const cp = this.canvasPoint(event);
+      this.dragMove(cp);
+    }
+  }
+
+  mouseUp(event) {
+    event.preventDefault();
+    this.mouseIsDown = false;
+    this.dragEnd();
+  }
+
+  touchMove(event) {
+    this.activeTouches = event.touches.length;
+
+    // Note: if multiple touches are inside the field
+    // then the "last" one wins whichever that happens
+    // to be.
+    for (let i = 0; i < event.changedTouches.length; i++) {
+      const touch = event.changedTouches[i];
+      const cp = this.canvasPoint(touch);
+      this.dragMove(cp);
+    }
+  }
+
+  touchEnd(event) {
+    event.preventDefault();
+    this.activeTouches = event.touches.length;
+    this.dragEnd();
   }
 
   isLineFilled(line) {
@@ -433,7 +451,9 @@ class App extends Component {
         touchStart={this.touchStart}
         touchMove={this.touchMove}
         touchEnd={this.touchEnd}
-        selectOrientation={this.selectOrientation}
+        mouseDown={this.mouseDown}
+        mouseMove={this.mouseMove}
+        mouseUp={this.mouseUp}
       />
     );
   }

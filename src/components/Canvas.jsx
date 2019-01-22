@@ -66,6 +66,9 @@ const Canvas = (props) => {
       onTouchStart={props.touchStart}
       onTouchMove={props.touchMove}
       onTouchEnd={props.touchEnd}
+      onMouseDown={props.mouseDown}
+      onMouseMove={props.mouseMove}
+      onMouseUp={props.mouseUp}
       viewBox={viewBox}
     >
       <Background />
