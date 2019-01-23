@@ -11,7 +11,7 @@
      transitions for original classes */
   transition: none;
 
-  fill: Red;
+  fill: #343434;
 }
 
 .piece-block {
