@@ -5,10 +5,10 @@ import Block from './Block';
 class Field extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
-    const { dude, blockCount } = this.props;
+    const { activePosition, blockCount } = this.props;
 
-    return dude.row !== nextProps.dude.row ||
-           dude.col !== nextProps.dude.col ||
+    return activePosition.row !== nextProps.activePosition.row ||
+           activePosition.col !== nextProps.activePosition.col ||
            blockCount !== nextProps.blockCount;
   }
 
@@ -24,7 +24,7 @@ class Field extends Component {
       width, height,
       blockSize,
       rows, cols,
-      dude: {
+      activePosition: {
         row: selectedRow,
         col: selectedCol
       }
@@ -43,7 +43,7 @@ class Field extends Component {
             y={y + r * blockSize}
             blockSize={blockSize}
             piece={currentBlock}
-            flash={r === selectedRow && c === selectedCol }
+            flash={r === selectedRow && c === selectedCol}
           />;
         grid.push(gridBlock);
       }

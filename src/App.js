@@ -35,7 +35,7 @@ class App extends Component {
     this.activeTouches = 0;
     this.mouseIsDown = false;
 
-    this.dude = {
+    this.activePosition = {
       row : -1,
       col : -1,
     };
@@ -230,8 +230,8 @@ class App extends Component {
     if (fp.col > -1 && fp.col < fieldWidthInBlocks &&
         fp.row > -1 && fp.row < fieldHeightInBlocks)
     {
-      this.dude.row = fp.row;
-      this.dude.col = fp.col;
+      this.activePosition.row = fp.row;
+      this.activePosition.col = fp.col;
     }
   }
 
@@ -373,11 +373,10 @@ class App extends Component {
   }
 
   gameLoop() {
-    this.props.moveObjects(this.newGameInput);
-    this.props.highlightDude(this.dude);
+    this.props.setActiveGridPosition(this.activePosition);
     this.props.cyclePieces(this.pieceDebug);
     this.props.checkPlaceability(
-      this.dude.col, this.dude.row,
+      this.activePosition.col, this.activePosition.row,
       this.props.currentPiece, this.orientation,
       this.field
     );
@@ -387,7 +386,7 @@ class App extends Component {
       if (this.props.placeable) {
         // update our internal field
         placeBlock(
-          this.dude.col, this.dude.row,
+          this.activePosition.col, this.activePosition.row,
           this.props.currentPiece, this.orientation,
           this.field
         );
@@ -412,8 +411,8 @@ class App extends Component {
       // to rotate it if that becomes a valid placement?
 
       if (placed) {
-        this.dude.row = -1;
-        this.dude.col = -1;
+        this.activePosition.row = -1;
+        this.activePosition.col = -1;
         this.orientation = ORIENTATION_NONE;
         this.props.nextPiece();
       }
@@ -466,8 +465,7 @@ class App extends Component {
   render() {
     return (
       <Canvas
-        pos={this.props.pos}
-        dude={this.props.dude}
+        activePosition={this.props.activePosition}
         orientationSelectors={this.orientationSelectors}
         fieldDimensions={this.fieldDimensions}
         currentPiece={this.props.currentPiece}

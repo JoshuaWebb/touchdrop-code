@@ -1,6 +1,5 @@
 import {
-  MOVE_OBJECTS,
-  HIGHLIGHT_DUDE,
+  SET_ACTIVE_GRID_POSITION,
   CYCLE_PIECES,
   SELECT_ORIENTATION,
   NEXT_PIECE,
@@ -8,8 +7,7 @@ import {
   CHECK_PLACEABILITY,
 } from '../actions';
 
-import moveObjects from './moveObjects';
-import highlightDude from './highlightDude';
+import setActiveGridPosition from './setActiveGridPosition';
 import cyclePieces from './cyclePieces';
 import selectOrientation from './selectOrientation';
 import nextPiece from './nextPiece';
@@ -22,11 +20,7 @@ import { PIECE_NONE, ORIENTATION_NONE } from '../components/Piece';
 import { fieldWidthInBlocks, fieldHeightInBlocks, hiddenHeight } from '../constants'
 
 const initialState = {
-  pos: {
-    x:  400,
-    y: -100,
-  },
-  dude: {
+  activePosition: {
     row: -1,
     col: -1,
   },
@@ -49,10 +43,8 @@ const initialState = {
 
 function reducer(state = initialState, action) {
   switch (action.type) {
-    case MOVE_OBJECTS:
-      return moveObjects(state, action);
-    case HIGHLIGHT_DUDE:
-      return highlightDude(state, action);
+    case SET_ACTIVE_GRID_POSITION:
+      return setActiveGridPosition(state, action);
     case CYCLE_PIECES:
       return cyclePieces(state, action);
     case SELECT_ORIENTATION:

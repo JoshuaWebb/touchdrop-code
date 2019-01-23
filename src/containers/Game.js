@@ -2,8 +2,7 @@ import { connect } from 'react-redux';
 
 import App from '../App';
 import {
-  moveObjects,
-  highlightDude,
+  setActiveGridPosition,
   cyclePieces,
   selectOrientation,
   nextPiece,
@@ -12,8 +11,7 @@ import {
 } from '../actions/index';
 
 const mapStateToProps = state => ({
-  pos: state.pos,
-  dude: state.dude,
+  activePosition: state.activePosition,
   currentPiece: state.currentPiece,
   orientation: state.orientation,
   field: state.field,
@@ -22,11 +20,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  moveObjects: (param) => {
-    dispatch(moveObjects(param));
-  },
-  highlightDude: (param) => {
-    dispatch(highlightDude(param));
+  setActiveGridPosition: (param) => {
+    dispatch(setActiveGridPosition(param));
   },
   cyclePieces: (param) => {
     dispatch(cyclePieces(param));

@@ -2,7 +2,6 @@ import React from 'react';
 
 import Background from './Background';
 import Field from './Field';
-import Ball from './Ball';
 import Piece from './Piece';
 import OrientationSelector from './OrientationSelector';
 
@@ -30,10 +29,10 @@ const Canvas = (props) => {
     blockSize,
   } = props.fieldDimensions;
 
-  const pieceX = fieldX + props.dude.col * blockSizeInUnits;
-  const pieceY = fieldY + props.dude.row * blockSizeInUnits;
+  const pieceX = fieldX + props.activePosition.col * blockSizeInUnits;
+  const pieceY = fieldY + props.activePosition.row * blockSizeInUnits;
 
-  const activePiece = props.dude.row !== -1
+  const activePiece = props.activePosition.row !== -1
     ? <Piece
         x={pieceX}
         y={pieceY}
@@ -59,7 +58,7 @@ const Canvas = (props) => {
     >
       <Background />
       <Field
-        dude={props.dude}
+        activePosition={props.activePosition}
         x={fieldX}
         y={fieldY}
         width={fieldWidth}
@@ -71,7 +70,6 @@ const Canvas = (props) => {
         blockCount={props.blockCount} />
       {activePiece}
       {orientationSelectors}
-      <Ball pos={props.pos} />
     </svg>
   );
 };

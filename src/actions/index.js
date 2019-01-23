@@ -1,19 +1,13 @@
-export const MOVE_OBJECTS = 'MOVE_OBJECTS';
-export const HIGHLIGHT_DUDE = 'HIGHLIGHT_DUDE';
+export const SET_ACTIVE_GRID_POSITION = 'SET_ACTIVE_GRID_POSITION';
 export const CYCLE_PIECES = 'CYCLE_PIECES';
 export const SELECT_ORIENTATION = 'SELECT_ORIENTATION';
 export const NEXT_PIECE = 'NEXT_PIECE';
 export const PLACE_BLOCK = 'PLACE_BLOCK';
 export const CHECK_PLACEABILITY = 'CHECK_PLACEABILITY';
 
-export const moveObjects = input => ({
-  type: MOVE_OBJECTS,
-  input,
-});
-
-export const highlightDude = dude => ({
-  type: HIGHLIGHT_DUDE,
-  dude: dude,
+export const setActiveGridPosition = activePosition => ({
+  type: SET_ACTIVE_GRID_POSITION,
+  activePosition: activePosition,
 });
 
 export const cyclePieces = debug => ({
