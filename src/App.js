@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import Canvas from './components/Canvas';
 
+import BagRandomizer from './randomizers/BagRandomizer';
+
 import {
   fieldWidthInBlocks, fieldHeightInBlocks,
   blockSizeInUnits, hiddenHeight,
@@ -63,9 +65,11 @@ class App extends Component {
 
     this.orientation = props.orientation;
 
-    // TODO: temporary; we need a "start" button
-    this.props.nextPiece();
+    // TODO: use a seedable random function
+    this.randomizer = new BagRandomizer(Math.random);
 
+    // TODO: temporary; we need a "start" button
+    this.rollNextPiece();
 
     this.keydown = this.keydown.bind(this);
     this.keyup = this.keyup.bind(this);
@@ -89,6 +93,8 @@ class App extends Component {
   }
 
   initialiseLayout() {
+    const previewSize = 65;
+
     //
     // Field
     //
@@ -97,7 +103,8 @@ class App extends Component {
     const fieldHeight = blockSizeInUnits * fieldHeightInBlocks;
 
     this.fieldDimensions = {
-      x: fieldWidth / -2,
+      // Center the field (but shift over for the preview pieces)
+      x: fieldWidth / -2 - previewSize/2,
       y: -yOffset-fieldHeight,
       blockSize: blockSizeInUnits,
       rows: fieldHeightInBlocks,
@@ -121,9 +128,7 @@ class App extends Component {
     const osYStart = -yOffset + osMargin;
 
     const allOsWidth = (osSize * orientations.length + osMargin * (orientations.length - 1));
-
-    // Center against the field
-    const osXStart = (this.fieldDimensions.x - this.fieldDimensions.width / -2) + (allOsWidth / -2);
+    const osXStart = (allOsWidth / -2);
 
     this.orientationSelectors = orientations.map((orientation, i) => ({
       x: osXStart + (osSize + osMargin)*i,
@@ -132,6 +137,26 @@ class App extends Component {
       height: osSize,
       orientation: orientation,
     }));
+
+    //
+    // Preview pieces
+    //
+
+    // We want to emphasize the next piece more than the
+    // rest, but we still want everything to be centered.
+    const minorReduction = 10;
+
+    const psXStart = this.fieldDimensions.x + fieldWidth;
+    const psYStart = this.fieldDimensions.y + fieldHeight - previewSize;
+    this.previewSlots = Array(this.props.previewLength).fill(0).map((_, i) => {
+      return {
+        x: psXStart + (i === 0 ? 0 : minorReduction / 2),
+        y: psYStart - (previewSize - minorReduction)*i,
+        width: previewSize - (i === 0 ? 0 : minorReduction),
+        height: previewSize - (i === 0 ? 0 : minorReduction),
+        index: i,
+      }
+    });
   }
 
   processKey(button, isDown) {
@@ -372,6 +397,22 @@ class App extends Component {
     return linesCleared;
   }
 
+  rollNextPiece() {
+    let nextPiece;
+    if (this.props.nextPieces.length === 0) {
+      nextPiece = this.randomizer.next();
+    } else {
+      nextPiece = this.props.nextPieces[0];
+    }
+
+    const nextPieces = this.props.nextPieces.slice(1);
+    while (nextPieces.length < this.props.previewLength) {
+      nextPieces.push(this.randomizer.next());
+    }
+
+    this.props.nextPiece(nextPiece, nextPieces);
+  }
+
   gameLoop() {
     this.props.setActiveGridPosition(this.activePosition);
     this.props.cyclePieces(this.pieceDebug);
@@ -414,7 +455,7 @@ class App extends Component {
         this.activePosition.row = -1;
         this.activePosition.col = -1;
         this.orientation = ORIENTATION_NONE;
-        this.props.nextPiece();
+        this.rollNextPiece();
       }
     }
 
@@ -467,6 +508,8 @@ class App extends Component {
       <Canvas
         activePosition={this.props.activePosition}
         orientationSelectors={this.orientationSelectors}
+        previewSlots={this.previewSlots}
+        nextPieces={this.props.nextPieces}
         fieldDimensions={this.fieldDimensions}
         currentPiece={this.props.currentPiece}
         orientation={this.props.orientation}

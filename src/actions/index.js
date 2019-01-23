@@ -21,8 +21,10 @@ export const selectOrientation = orientation => ({
   orientation: orientation,
 });
 
-export const nextPiece = () => ({
+export const nextPiece = (nextPiece, nextPieces) => ({
   type: NEXT_PIECE,
+  nextPiece: nextPiece,
+  nextPieces: nextPieces,
 });
 
 export const placeBlock = (field) => ({

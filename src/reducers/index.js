@@ -25,6 +25,8 @@ const initialState = {
     col: -1,
   },
   currentPiece: PIECE_NONE,
+  previewLength: 5,
+  nextPieces: [],
   orientation: ORIENTATION_NONE,
   placeable: false,
   blockCount: 0,
@@ -50,7 +52,7 @@ function reducer(state = initialState, action) {
     case SELECT_ORIENTATION:
       return selectOrientation(state, action);
     case NEXT_PIECE:
-      return nextPiece(state);
+      return nextPiece(state, action);
     case PLACE_BLOCK:
       return placeBlock(state, action);
     case CHECK_PLACEABILITY:

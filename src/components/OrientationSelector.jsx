@@ -15,30 +15,30 @@ const selectedStyle = {
 };
 
 const OrientationSelector = (props) => {
-  const { piece, orientation, selected } = props;
+  const { x, y, width, height, piece, orientation, selected, } = props;
 
   const padding = 4;
   const cornerRadius = 6;
-  const blockSize = (props.width - padding * 2) / 4;
+  const blockSize = (width - padding * 2) / 4;
 
   return (
     <g>
       <rect
         fill="transparent"
-        x={props.x}
-        y={props.y}
+        x={x}
+        y={y}
         rx={cornerRadius}
         ry={cornerRadius}
-        width={props.width}
-        height={props.height}
+        width={width}
+        height={height}
         shapeRendering="auto"
         style={selected ? selectedStyle : style} />
       <Piece
         piece={piece}
         orientation={orientation}
         blockSize={blockSize}
-        cx={props.x + props.width / 2}
-        cy={props.y + props.height / 2}
+        cx={x + width / 2}
+        cy={y + height / 2}
       />
     </g>
   )

@@ -4,12 +4,22 @@ import Background from './Background';
 import Field from './Field';
 import Piece from './Piece';
 import OrientationSelector from './OrientationSelector';
+import PreviewPiece from './PreviewPiece';
 
 import { blockSizeInUnits } from '../constants';
 
 const Canvas = (props) => {
   const gameHeight = 1200;
   const viewBox = [window.innerWidth / -2, -gameHeight, window.innerWidth, gameHeight];
+
+  const bagDisplay = props.previewSlots.map((ps, i) =>
+    <PreviewPiece
+      key={`pp${i}`}
+      x={ps.x} y={ps.y}
+      width={ps.width} height={ps.height}
+      piece={props.nextPieces[i]}
+    />
+  );
 
   const orientationSelectors = props.orientationSelectors.map((os, i) =>
     <OrientationSelector
@@ -70,6 +80,7 @@ const Canvas = (props) => {
         blockCount={props.blockCount} />
       {activePiece}
       {orientationSelectors}
+      {bagDisplay}
     </svg>
   );
 };

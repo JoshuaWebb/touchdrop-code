@@ -13,6 +13,8 @@ import {
 const mapStateToProps = state => ({
   activePosition: state.activePosition,
   currentPiece: state.currentPiece,
+  nextPieces: state.nextPieces,
+  previewLength: state.previewLength,
   orientation: state.orientation,
   field: state.field,
   blockCount: state.blockCount,
@@ -29,8 +31,8 @@ const mapDispatchToProps = dispatch => ({
   selectOrientation: (param) => {
     dispatch(selectOrientation(param));
   },
-  nextPiece: () => {
-    dispatch(nextPiece());
+  nextPiece: (np, nps) => {
+    dispatch(nextPiece(np, nps));
   },
   placeBlock: (x, y, piece, orientation, field) => {
     dispatch(placeBlock(x, y, piece, orientation, field));
