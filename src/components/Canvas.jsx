@@ -4,6 +4,7 @@ import Background from './Background';
 import Field from './Field';
 import Piece from './Piece';
 import LineCount from './LineCount';
+import Button from './Button';
 import OrientationSelector from './OrientationSelector';
 import PreviewPiece from './PreviewPiece';
 
@@ -58,6 +59,7 @@ const Canvas = (props) => {
       id="game-canvas"
       preserveAspectRatio="xMidYMax slice"
       shapeRendering="crispEdges"
+      textRendering="optimizeLegibility"
       style={ {touchAction: 'none'} }
       onTouchStart={props.touchStart}
       onTouchMove={props.touchMove}
@@ -87,6 +89,16 @@ const Canvas = (props) => {
         x={fieldX + 85} y={fieldY - 10}
         linesCleared={props.linesCleared}
         target={props.lineTarget}
+      />
+      <Button
+        // TODO: calculate the position for this properly...
+        x={fieldX + fieldWidth + 8} y={fieldY + 8}
+        width={58}
+        height={32}
+        text="RESET"
+        color="#ec3636"
+        pressedColor="#dc2626"
+        onPressed={props.reset}
       />
     </svg>
   );

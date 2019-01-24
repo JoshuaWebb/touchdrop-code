@@ -9,6 +9,7 @@ import {
   placeBlock,
   updateStats,
   checkPlaceability,
+  reset,
 } from '../actions/index';
 
 const mapStateToProps = state => ({
@@ -37,14 +38,17 @@ const mapDispatchToProps = dispatch => ({
   nextPiece: (np, nps) => {
     dispatch(nextPiece(np, nps));
   },
-  placeBlock: (x, y, piece, orientation, field) => {
-    dispatch(placeBlock(x, y, piece, orientation, field));
+  placeBlock: (field) => {
+    dispatch(placeBlock(field));
   },
   checkPlaceability: (x, y, piece, orientation, field) => {
     dispatch(checkPlaceability(x, y, piece, orientation, field));
   },
   updateStats: (linesCleared) => {
     dispatch(updateStats(linesCleared));
+  },
+  reset: () => {
+    dispatch(reset());
   },
 });
 

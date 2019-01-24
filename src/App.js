@@ -19,64 +19,15 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    // internal state
-    this.oldGameInput = {
-      left : { isDown: false, halfTransitionCount: 0 },
-      right: { isDown: false, halfTransitionCount: 0 },
-      up   : { isDown: false, halfTransitionCount: 0 },
-      down : { isDown: false, halfTransitionCount: 0 },
-    };
-
-    this.newGameInput = {
-      left : { isDown: false, halfTransitionCount: 0 },
-      right: { isDown: false, halfTransitionCount: 0 },
-      up   : { isDown: false, halfTransitionCount: 0 },
-      down : { isDown: false, halfTransitionCount: 0 },
-    };
-
-    this.activeTouches = 0;
-    this.mouseIsDown = false;
-
-    this.activePosition = {
-      row : -1,
-      col : -1,
-    };
-
-    this.pieceDebug = {
-      next : false,
-      prev : false,
-    };
-
-    // TODO: we need some buffer at the top to account for placing
-    // pieces at the top of the field that extend off the top.
-    // The buffer should not be rendered.
-    this.field = {
-      blocks: this.props.field.blocks.map(r =>
-        [...r]
-      ),
-      hiddenBlocks: this.props.field.hiddenBlocks.map(r =>
-        [...r]
-      ),
-      lineClearFlags: [...this.props.field.lineClearFlags],
-      hiddenLineClearFlags: [...this.props.field.hiddenLineClearFlags],
-    };
-
     this.initialiseLayout();
-
-    this.orientation = props.orientation;
-
-    // TODO: use a seedable random function
-    this.randomizer = new BagRandomizer(Math.random);
-
-    // TODO: temporary; we need a "start" button
-    this.rollNextPiece();
-    this.linesCleared = 0;
 
     this.keydown = this.keydown.bind(this);
     this.keyup = this.keyup.bind(this);
     this.gameLoop = this.gameLoop.bind(this);
     this.selectOrientation = this.selectOrientation.bind(this);
     this.updateOrientation = this.updateOrientation.bind(this);
+    this.init = this.init.bind(this);
+    this.start = this.start.bind(this);
     this.dragMove = this.dragMove.bind(this);
     this.dragEnd = this.dragEnd.bind(this);
     this.mouseDown = this.mouseDown.bind(this);
@@ -91,6 +42,9 @@ class App extends Component {
     this.mouseDown = this.mouseDown.bind(this);
     this.mouseMove = this.mouseMove.bind(this);
     this.mouseUp   = this.mouseUp.bind(this);
+
+    // TODO: temporary; we need a proper "start" button
+    this.start();
   }
 
   initialiseLayout() {
@@ -212,6 +166,64 @@ class App extends Component {
       case 87: this.processKey(this.newGameInput.up, false); break;
       // no default
     }
+  }
+
+  init() {
+    // internal state
+    this.oldGameInput = {
+      left : { isDown: false, halfTransitionCount: 0 },
+      right: { isDown: false, halfTransitionCount: 0 },
+      up   : { isDown: false, halfTransitionCount: 0 },
+      down : { isDown: false, halfTransitionCount: 0 },
+    };
+
+    this.newGameInput = {
+      left : { isDown: false, halfTransitionCount: 0 },
+      right: { isDown: false, halfTransitionCount: 0 },
+      up   : { isDown: false, halfTransitionCount: 0 },
+      down : { isDown: false, halfTransitionCount: 0 },
+    };
+
+    this.pieceDebug = {
+      next : false,
+      prev : false,
+    };
+
+    this.nextPieces = [];
+
+    // TODO: use a seedable random function
+    this.randomizer = new BagRandomizer(Math.random);
+    this.activeTouches = 0;
+    this.mouseIsDown = false;
+    this.activePosition = {
+      row : -1,
+      col : -1,
+    };
+
+    this.field = {
+      blocks:
+        Array(fieldHeightInBlocks).fill(0).map(r =>
+          Array(fieldWidthInBlocks).fill(PIECE_NONE)),
+      hiddenBlocks:
+        Array(hiddenHeight).fill(0).map(r =>
+          Array(fieldWidthInBlocks).fill(PIECE_NONE)),
+      lineClearFlags: Array(fieldHeightInBlocks).fill(false),
+      hiddenLineClearFlags: Array(hiddenHeight).fill(false),
+    };
+
+    this.nextPieces.length = 0;
+
+    this.linesCleared = this.props.linesCleared;
+    this.orientation = this.props.orientation;
+
+    this.props.reset();
+  }
+
+  start() {
+    this.init();
+    this.rollNextPiece();
+
+    // TODO: "READY" / "GO"
   }
 
   // TODO: we probably will want to do these way more
@@ -400,13 +412,13 @@ class App extends Component {
 
   rollNextPiece() {
     let nextPiece;
-    if (this.props.nextPieces.length === 0) {
+    if (this.nextPieces.length === 0) {
       nextPiece = this.randomizer.next();
     } else {
-      nextPiece = this.props.nextPieces[0];
+      nextPiece = this.nextPieces[0];
     }
 
-    const nextPieces = this.props.nextPieces.slice(1);
+    const nextPieces = this.nextPieces = this.nextPieces.slice(1);
     while (nextPieces.length < this.props.previewLength) {
       nextPieces.push(this.randomizer.next());
     }
@@ -437,12 +449,9 @@ class App extends Component {
         this.linesCleared += lines;
         this.props.updateStats(this.linesCleared);
 
-        // TODO: count lines cleared
-
         // TODO: line clear delay / animation??
         // broadcast to everyone else
         this.props.placeBlock(this.field);
-
 
         placed = true;
       }
@@ -522,6 +531,7 @@ class App extends Component {
         blockCount={this.props.blockCount}
         linesCleared={this.props.linesCleared}
         lineTarget={this.props.lineTarget}
+        reset={this.start}
         touchStart={this.touchStart}
         touchMove={this.touchMove}
         touchEnd={this.touchEnd}

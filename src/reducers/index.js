@@ -6,6 +6,7 @@ import {
   PLACE_BLOCK,
   CHECK_PLACEABILITY,
   UPDATE_STATS,
+  RESET,
 } from '../actions';
 
 import setActiveGridPosition from './setActiveGridPosition';
@@ -19,7 +20,7 @@ import updateStats from './updateStats';
 // TODO: I think this is probably bad style to be in the component...
 import { PIECE_NONE, ORIENTATION_NONE } from '../components/Piece';
 
-import { fieldWidthInBlocks, fieldHeightInBlocks, hiddenHeight } from '../constants'
+import { fieldWidthInBlocks, fieldHeightInBlocks } from '../constants'
 
 const initialState = {
   activePosition: {
@@ -37,13 +38,7 @@ const initialState = {
   field: {
     blocks :
       Array(fieldHeightInBlocks).fill(0).map(r =>
-        Array(fieldWidthInBlocks).fill(PIECE_NONE)),
-    // TODO: Make these only internal state in App.js ?
-    hiddenBlocks:
-      Array(hiddenHeight).fill(0).map(r =>
-        Array(fieldWidthInBlocks).fill(PIECE_NONE)),
-    lineClearFlags: Array(fieldHeightInBlocks).fill(false),
-    hiddenLineClearFlags: Array(hiddenHeight).fill(false),
+        Array(fieldWidthInBlocks).fill(PIECE_NONE))
   },
 };
 
@@ -63,6 +58,10 @@ function reducer(state = initialState, action) {
       return checkPlaceability(state, action);
     case UPDATE_STATS:
       return updateStats(state, action);
+    case RESET:
+      // TODO: take some game options that
+      // override the initial state?
+      return initialState;
     default:
       return state;
   }

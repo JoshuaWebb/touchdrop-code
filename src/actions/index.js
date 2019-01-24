@@ -5,6 +5,7 @@ export const NEXT_PIECE = 'NEXT_PIECE';
 export const PLACE_BLOCK = 'PLACE_BLOCK';
 export const CHECK_PLACEABILITY = 'CHECK_PLACEABILITY';
 export const UPDATE_STATS = 'UPDATE_STATS';
+export const RESET = 'RESET';
 
 export const setActiveGridPosition = activePosition => ({
   type: SET_ACTIVE_GRID_POSITION,
@@ -45,4 +46,8 @@ export const checkPlaceability = (x, y, piece, orientation, field) => ({
 export const updateStats = (linesCleared) => ({
   type: UPDATE_STATS,
   linesCleared: linesCleared,
+});
+
+export const reset = () => ({
+  type: RESET,
 });
