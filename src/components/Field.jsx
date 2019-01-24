@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import Block from './Block';
+import FieldBackground from './FieldBackground';
 
 class Field extends Component {
 
@@ -30,9 +31,10 @@ class Field extends Component {
       }
     } = this.props;
 
+
     var grid = [];
-    for (var r = 0; r < rows; r++) {
-      for (var c = 0; c < cols; c++) {
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
         const id = r * cols + c;
         const currentBlock = this.props.blocks[r][c];
         const gridBlock =
@@ -51,6 +53,15 @@ class Field extends Component {
 
     return (
       <g id="field">
+        <FieldBackground
+          x={x}
+          y={y}
+          width={width}
+          height={height}
+          rows={rows}
+          cols={cols}
+          blockSize={blockSize}
+        />
         {grid}
         <rect
           id="field-border"

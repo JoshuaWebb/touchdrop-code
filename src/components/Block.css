@@ -1,8 +1,6 @@
 .grid-block {
   transition: fill 0.5s;
-  fill: #232323;
-  stroke-width: 1;
-  stroke: #FFFFFF33;
+  fill: transparent;
 }
 
 .grid-block-flash {
@@ -11,13 +9,17 @@
      transitions for original classes */
   transition: none;
 
-  fill: #343434;
+  stroke-width: 1;
+  stroke: #FFFFFF22;
+  fill: #C4C4C422;
 }
 
 .piece-block {
   transition: none;
+  stroke: #ffffff;
 }
 
 .cannot-place {
-  opacity: 0.5;
+  fill-opacity: 0.5;
+  stroke: #232323;
 }
