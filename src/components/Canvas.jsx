@@ -60,7 +60,11 @@ const Canvas = (props) => {
       preserveAspectRatio="xMidYMax slice"
       shapeRendering="crispEdges"
       textRendering="optimizeLegibility"
-      style={ {touchAction: 'none'} }
+      style={ {
+        touchAction: 'none',
+        width: props.windowWidth,
+        height: props.windowHeight,
+      } }
       onTouchStart={props.touchStart}
       onTouchMove={props.touchMove}
       onTouchEnd={props.touchEnd}

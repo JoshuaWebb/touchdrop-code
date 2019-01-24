@@ -6,6 +6,7 @@ export const PLACE_BLOCK = 'PLACE_BLOCK';
 export const CHECK_PLACEABILITY = 'CHECK_PLACEABILITY';
 export const UPDATE_STATS = 'UPDATE_STATS';
 export const RESET = 'RESET';
+export const RESIZE = 'RESIZE';
 
 export const setActiveGridPosition = activePosition => ({
   type: SET_ACTIVE_GRID_POSITION,
@@ -50,4 +51,10 @@ export const updateStats = (linesCleared) => ({
 
 export const reset = () => ({
   type: RESET,
+});
+
+export const resize = (newWidth, newHeight) => ({
+  type: RESIZE,
+  newWidth: newWidth,
+  newHeight: newHeight,
 });

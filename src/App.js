@@ -499,9 +499,7 @@ class App extends Component {
 
   componentDidMount() {
     window.onresize = () => {
-      const cnv = document.getElementById('game-canvas');
-      cnv.style.width = `${window.innerWidth}px`;
-      cnv.style.height = `${window.innerHeight}px`;
+      this.props.resize(window.innerWidth, window.innerHeight);
     };
     window.onresize();
 
@@ -538,6 +536,8 @@ class App extends Component {
         mouseDown={this.mouseDown}
         mouseMove={this.mouseMove}
         mouseUp={this.mouseUp}
+        windowWidth={this.props.windowWidth}
+        windowHeight={this.props.windowHeight}
       />
     );
   }

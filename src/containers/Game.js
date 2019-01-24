@@ -10,6 +10,7 @@ import {
   updateStats,
   checkPlaceability,
   reset,
+  resize,
 } from '../actions/index';
 
 const mapStateToProps = state => ({
@@ -23,6 +24,8 @@ const mapStateToProps = state => ({
   placeable: state.placeable,
   linesCleared: state.linesCleared,
   lineTarget: state.lineTarget,
+  windowWidth: state.windowWidth,
+  windowHeight: state.windowHeight,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -50,6 +53,9 @@ const mapDispatchToProps = dispatch => ({
   reset: () => {
     dispatch(reset());
   },
+  resize: (newWidth, newHeight) => {
+    dispatch(resize(newWidth, newHeight));
+  }
 });
 
 const Game = connect(

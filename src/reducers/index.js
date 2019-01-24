@@ -7,6 +7,7 @@ import {
   CHECK_PLACEABILITY,
   UPDATE_STATS,
   RESET,
+  RESIZE,
 } from '../actions';
 
 import setActiveGridPosition from './setActiveGridPosition';
@@ -16,6 +17,7 @@ import nextPiece from './nextPiece';
 import placeBlock from './placeBlock';
 import checkPlaceability from './checkPlaceability';
 import updateStats from './updateStats';
+import resize from './resize';
 
 // TODO: I think this is probably bad style to be in the component...
 import { PIECE_NONE, ORIENTATION_NONE } from '../components/Piece';
@@ -58,6 +60,8 @@ function reducer(state = initialState, action) {
       return checkPlaceability(state, action);
     case UPDATE_STATS:
       return updateStats(state, action);
+    case RESIZE:
+      return resize(state, action);
     case RESET:
       // TODO: take some game options that
       // override the initial state?
