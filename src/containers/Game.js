@@ -7,6 +7,7 @@ import {
   selectOrientation,
   nextPiece,
   placeBlock,
+  updateStats,
   checkPlaceability,
 } from '../actions/index';
 
@@ -19,6 +20,8 @@ const mapStateToProps = state => ({
   field: state.field,
   blockCount: state.blockCount,
   placeable: state.placeable,
+  linesCleared: state.linesCleared,
+  lineTarget: state.lineTarget,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -39,6 +42,9 @@ const mapDispatchToProps = dispatch => ({
   },
   checkPlaceability: (x, y, piece, orientation, field) => {
     dispatch(checkPlaceability(x, y, piece, orientation, field));
+  },
+  updateStats: (linesCleared) => {
+    dispatch(updateStats(linesCleared));
   },
 });
 

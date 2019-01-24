@@ -70,6 +70,7 @@ class App extends Component {
 
     // TODO: temporary; we need a "start" button
     this.rollNextPiece();
+    this.linesCleared = 0;
 
     this.keydown = this.keydown.bind(this);
     this.keyup = this.keyup.bind(this);
@@ -433,6 +434,9 @@ class App extends Component {
         );
 
         var lines = this.doLineClears(this.field);
+        this.linesCleared += lines;
+        this.props.updateStats(this.linesCleared);
+
         // TODO: count lines cleared
 
         // TODO: line clear delay / animation??
@@ -516,6 +520,8 @@ class App extends Component {
         placeable={this.props.placeable}
         blocks={this.props.field.blocks}
         blockCount={this.props.blockCount}
+        linesCleared={this.props.linesCleared}
+        lineTarget={this.props.lineTarget}
         touchStart={this.touchStart}
         touchMove={this.touchMove}
         touchEnd={this.touchEnd}

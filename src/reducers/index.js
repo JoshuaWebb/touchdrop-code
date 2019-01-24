@@ -5,6 +5,7 @@ import {
   NEXT_PIECE,
   PLACE_BLOCK,
   CHECK_PLACEABILITY,
+  UPDATE_STATS,
 } from '../actions';
 
 import setActiveGridPosition from './setActiveGridPosition';
@@ -13,6 +14,7 @@ import selectOrientation from './selectOrientation';
 import nextPiece from './nextPiece';
 import placeBlock from './placeBlock';
 import checkPlaceability from './checkPlaceability';
+import updateStats from './updateStats';
 
 // TODO: I think this is probably bad style to be in the component...
 import { PIECE_NONE, ORIENTATION_NONE } from '../components/Piece';
@@ -30,6 +32,8 @@ const initialState = {
   orientation: ORIENTATION_NONE,
   placeable: false,
   blockCount: 0,
+  linesCleared: 0,
+  lineTarget: 40,
   field: {
     blocks :
       Array(fieldHeightInBlocks).fill(0).map(r =>
@@ -57,6 +61,8 @@ function reducer(state = initialState, action) {
       return placeBlock(state, action);
     case CHECK_PLACEABILITY:
       return checkPlaceability(state, action);
+    case UPDATE_STATS:
+      return updateStats(state, action);
     default:
       return state;
   }

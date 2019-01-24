@@ -3,6 +3,7 @@ import React from 'react';
 import Background from './Background';
 import Field from './Field';
 import Piece from './Piece';
+import LineCount from './LineCount';
 import OrientationSelector from './OrientationSelector';
 import PreviewPiece from './PreviewPiece';
 
@@ -81,6 +82,12 @@ const Canvas = (props) => {
       {activePiece}
       {orientationSelectors}
       {bagDisplay}
+      <LineCount
+        // TODO: calculate the position for this properly...
+        x={fieldX + 85} y={fieldY - 10}
+        linesCleared={props.linesCleared}
+        target={props.lineTarget}
+      />
     </svg>
   );
 };

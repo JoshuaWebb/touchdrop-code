@@ -4,6 +4,7 @@ export const SELECT_ORIENTATION = 'SELECT_ORIENTATION';
 export const NEXT_PIECE = 'NEXT_PIECE';
 export const PLACE_BLOCK = 'PLACE_BLOCK';
 export const CHECK_PLACEABILITY = 'CHECK_PLACEABILITY';
+export const UPDATE_STATS = 'UPDATE_STATS';
 
 export const setActiveGridPosition = activePosition => ({
   type: SET_ACTIVE_GRID_POSITION,
@@ -39,4 +40,9 @@ export const checkPlaceability = (x, y, piece, orientation, field) => ({
   piece: piece,
   orientation: orientation,
   field: field,
+});
+
+export const updateStats = (linesCleared) => ({
+  type: UPDATE_STATS,
+  linesCleared: linesCleared,
 });
