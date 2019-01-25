@@ -1,6 +1,5 @@
 import React from 'react';
 
-import Background from './Background';
 import Field from './Field';
 import Piece from './Piece';
 import LineCount from './LineCount';
@@ -8,7 +7,10 @@ import Button from './Button';
 import OrientationSelector from './OrientationSelector';
 import PreviewPiece from './PreviewPiece';
 
-import { blockSizeInUnits } from '../constants';
+import {
+  blockSizeInUnits,
+  GAMEMODE_LINE_TARGET,
+} from '../constants';
 
 const Canvas = (props) => {
   const gameHeight = 1200;
@@ -41,10 +43,28 @@ const Canvas = (props) => {
     blockSize,
   } = props.fieldDimensions;
 
+  let gameModeHud;
+  switch (props.gameMode) {
+    case GAMEMODE_LINE_TARGET: {
+      // TODO: calculate the position for this properly...
+      const lineCountPositionX = fieldX + 85;
+      const lineCountPositionY = fieldY - 10;
+      gameModeHud = <React.Fragment>
+        <LineCount
+          x={lineCountPositionX}
+          y={lineCountPositionY}
+          linesCleared={props.linesCleared}
+          target={props.lineTarget}
+        />
+      </React.Fragment>
+    } break;
+    default: gameModeHud = null;
+  }
+
   const pieceX = fieldX + props.activePosition.col * blockSizeInUnits;
   const pieceY = fieldY + props.activePosition.row * blockSizeInUnits;
 
-  const activePiece = props.activePosition.row !== -1
+  const activePiece = (props.activePosition.row !== -1
     ? <Piece
         x={pieceX}
         y={pieceY}
@@ -52,7 +72,7 @@ const Canvas = (props) => {
         orientation={props.orientation}
         placeable={props.placeable}
         blockSize={blockSizeInUnits} />
-    : null;
+    : null);
 
   return (
     <svg
@@ -73,7 +93,6 @@ const Canvas = (props) => {
       onMouseUp={props.mouseUp}
       viewBox={viewBox}
     >
-      <Background />
       <Field
         activePosition={props.activePosition}
         x={fieldX}
@@ -88,12 +107,7 @@ const Canvas = (props) => {
       {activePiece}
       {orientationSelectors}
       {bagDisplay}
-      <LineCount
-        // TODO: calculate the position for this properly...
-        x={fieldX + 85} y={fieldY - 10}
-        linesCleared={props.linesCleared}
-        target={props.lineTarget}
-      />
+      {gameModeHud}
       <Button
         // TODO: calculate the position for this properly...
         x={fieldX + fieldWidth + 8} y={fieldY + 8}
@@ -103,6 +117,16 @@ const Canvas = (props) => {
         color="#ec3636"
         pressedColor="#dc2626"
         onPressed={props.reset}
+      />
+      <Button
+        // TODO: calculate the position for this properly...
+        x={fieldX + fieldWidth + 8} y={fieldY + 8 + 32 + 8}
+        width={58}
+        height={32}
+        text="MENU"
+        color="#3e3e3e"
+        pressedColor="#292929"
+        onPressed={props.mainMenu}
       />
     </svg>
   );

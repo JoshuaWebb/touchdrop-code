@@ -11,9 +11,13 @@ import {
   checkPlaceability,
   reset,
   resize,
+  setGameState,
+  setGameMode,
 } from '../actions/index';
 
 const mapStateToProps = state => ({
+  gameState: state.gameState,
+  gameMode: state.gameMode,
   activePosition: state.activePosition,
   currentPiece: state.currentPiece,
   nextPieces: state.nextPieces,
@@ -55,7 +59,13 @@ const mapDispatchToProps = dispatch => ({
   },
   resize: (newWidth, newHeight) => {
     dispatch(resize(newWidth, newHeight));
-  }
+  },
+  setGameState: (newGameState) => {
+    dispatch(setGameState(newGameState));
+  },
+  setGameMode: (newMode) => {
+    dispatch(setGameMode(newMode));
+  },
 });
 
 const Game = connect(

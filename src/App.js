@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import Menu from './components/Menu';
+import EndScreen from './components/EndScreen';
 import Canvas from './components/Canvas';
 
 import BagRandomizer from './randomizers/BagRandomizer';
@@ -7,6 +9,9 @@ import BagRandomizer from './randomizers/BagRandomizer';
 import {
   fieldWidthInBlocks, fieldHeightInBlocks,
   blockSizeInUnits, hiddenHeight,
+  GAMESTATE_PAUSED, GAMESTATE_MENU, GAMESTATE_END,
+  GAMEMODE_ZEN,
+  GAMEMODE_LINE_TARGET,
 } from './constants';
 
 import {
@@ -28,6 +33,8 @@ class App extends Component {
     this.updateOrientation = this.updateOrientation.bind(this);
     this.init = this.init.bind(this);
     this.start = this.start.bind(this);
+    this.mainMenu = this.mainMenu.bind(this);
+    this.pause = this.pause.bind(this);
     this.dragMove = this.dragMove.bind(this);
     this.dragEnd = this.dragEnd.bind(this);
     this.mouseDown = this.mouseDown.bind(this);
@@ -43,8 +50,25 @@ class App extends Component {
     this.mouseMove = this.mouseMove.bind(this);
     this.mouseUp   = this.mouseUp.bind(this);
 
-    // TODO: temporary; we need a proper "start" button
-    this.start();
+    this.mainMenuItems = [
+      {
+        text: 'ZEN MODE',
+        onClick: () => {
+          this.props.setGameMode(GAMEMODE_ZEN);
+          this.start();
+        },
+      }, {
+        text: 'LINE TARGET MODE',
+        onClick: () => {
+          this.props.setGameMode(GAMEMODE_LINE_TARGET);
+          this.start();
+        },
+      },
+    ];
+
+    this.menuItems = this.mainMenuItems;
+
+    this.init();
   }
 
   initialiseLayout() {
@@ -213,17 +237,26 @@ class App extends Component {
 
     this.nextPieces.length = 0;
 
-    this.linesCleared = this.props.linesCleared;
-    this.orientation = this.props.orientation;
-
-    this.props.reset();
+    // TODO: clean up the duplication / inconsistency between this
+    // and redux when we initialise / reset the game.
+    this.linesCleared = 0;
+    this.orientation = ORIENTATION_NONE;
   }
 
   start() {
     this.init();
+    this.props.reset();
     this.rollNextPiece();
 
     // TODO: "READY" / "GO"
+  }
+
+  pause() {
+    this.props.setGameState(GAMESTATE_PAUSED);
+  }
+
+  mainMenu() {
+    this.props.setGameState(GAMESTATE_MENU);
   }
 
   // TODO: we probably will want to do these way more
@@ -435,6 +468,8 @@ class App extends Component {
       this.field
     );
 
+    // TODO: check for totally unplaceable situation / game over
+
     if (this.place) {
       var placed = false;
       if (this.props.placeable) {
@@ -454,6 +489,18 @@ class App extends Component {
         this.props.placeBlock(this.field);
 
         placed = true;
+      }
+
+      // Check win/end conditions
+      switch (this.props.gameMode) {
+        case GAMEMODE_ZEN: /* There is no defined goal */ break;
+        case GAMEMODE_LINE_TARGET:
+          if (this.linesCleared >= this.props.lineTarget) {
+            this.props.setGameState(GAMESTATE_END);
+          }
+        break;
+
+        // no default
       }
 
       // TODO: punishment for trying to drop in a
@@ -515,8 +562,27 @@ class App extends Component {
   }
 
   render() {
+    if (this.props.gameState === GAMESTATE_MENU) {
+      return (
+        <Menu items={this.menuItems} />
+      );
+    }
+
+    if (this.props.gameState === GAMESTATE_END) {
+      return (
+        <EndScreen
+          gameMode={this.props.gameMode}
+          blockCount={this.props.blockCount}
+          linesCleared={this.props.linesCleared}
+          reset={this.start}
+          mainMenu={this.mainMenu}
+        />
+      );
+    }
+
     return (
       <Canvas
+        gameState={this.props.gameState}
         activePosition={this.props.activePosition}
         orientationSelectors={this.orientationSelectors}
         previewSlots={this.previewSlots}
@@ -526,10 +592,13 @@ class App extends Component {
         orientation={this.props.orientation}
         placeable={this.props.placeable}
         blocks={this.props.field.blocks}
-        blockCount={this.props.blockCount}
         linesCleared={this.props.linesCleared}
+        blockCount={this.props.blockCount}
         lineTarget={this.props.lineTarget}
+        gameMode={this.props.gameMode}
         reset={this.start}
+        mainMenu={this.mainMenu}
+        pause={this.pause}
         touchStart={this.touchStart}
         touchMove={this.touchMove}
         touchEnd={this.touchEnd}

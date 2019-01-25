@@ -8,6 +8,8 @@ import {
   UPDATE_STATS,
   RESET,
   RESIZE,
+  SET_GAME_STATE,
+  SET_GAME_MODE,
 } from '../actions';
 
 import setActiveGridPosition from './setActiveGridPosition';
@@ -18,13 +20,19 @@ import placeBlock from './placeBlock';
 import checkPlaceability from './checkPlaceability';
 import updateStats from './updateStats';
 import resize from './resize';
+import setGameState from './setGameState';
+import setGameMode from './setGameMode';
 
 // TODO: I think this is probably bad style to be in the component...
 import { PIECE_NONE, ORIENTATION_NONE } from '../components/Piece';
 
-import { fieldWidthInBlocks, fieldHeightInBlocks } from '../constants'
+import {
+  fieldWidthInBlocks, fieldHeightInBlocks,
+  GAMESTATE_MENU, GAMESTATE_PLAYING,
+} from '../constants'
 
 const initialState = {
+  gameState: GAMESTATE_MENU,
   activePosition: {
     row: -1,
     col: -1,
@@ -62,10 +70,20 @@ function reducer(state = initialState, action) {
       return updateStats(state, action);
     case RESIZE:
       return resize(state, action);
+    case SET_GAME_STATE:
+      return setGameState(state, action);
+    case SET_GAME_MODE:
+      return setGameMode(state, action);
     case RESET:
       // TODO: take some game options that
       // override the initial state?
-      return initialState;
+      return {
+        ...initialState,
+        windowWidth: state.windowWidth,
+        windowHeight: state.windowHeight,
+        gameMode: state.gameMode,
+        gameState: GAMESTATE_PLAYING,
+      };
     default:
       return state;
   }
