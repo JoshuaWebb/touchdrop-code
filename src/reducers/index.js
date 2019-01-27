@@ -6,6 +6,7 @@ import {
   PLACE_BLOCK,
   CHECK_PLACEABILITY,
   UPDATE_STATS,
+  UPDATE_TIMER,
   RESET,
   RESIZE,
   SET_GAME_STATE,
@@ -19,6 +20,7 @@ import nextPiece from './nextPiece';
 import placeBlock from './placeBlock';
 import checkPlaceability from './checkPlaceability';
 import updateStats from './updateStats';
+import updateTimer from './updateTimer';
 import resize from './resize';
 import setGameState from './setGameState';
 import setGameMode from './setGameMode';
@@ -45,6 +47,7 @@ const initialState = {
   blockCount: 0,
   linesCleared: 0,
   lineTarget: 40,
+  timerMillis: 0,
   field: {
     blocks :
       Array(fieldHeightInBlocks).fill(0).map(r =>
@@ -68,6 +71,8 @@ function reducer(state = initialState, action) {
       return checkPlaceability(state, action);
     case UPDATE_STATS:
       return updateStats(state, action);
+    case UPDATE_TIMER:
+      return updateTimer(state, action);
     case RESIZE:
       return resize(state, action);
     case SET_GAME_STATE:

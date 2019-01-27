@@ -13,6 +13,7 @@ import {
   resize,
   setGameState,
   setGameMode,
+  updateTimer,
 } from '../actions/index';
 
 const mapStateToProps = state => ({
@@ -30,6 +31,7 @@ const mapStateToProps = state => ({
   lineTarget: state.lineTarget,
   windowWidth: state.windowWidth,
   windowHeight: state.windowHeight,
+  timerMillis: state.timerMillis,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -65,6 +67,9 @@ const mapDispatchToProps = dispatch => ({
   },
   setGameMode: (newMode) => {
     dispatch(setGameMode(newMode));
+  },
+  updateTimer: (timerMillis) => {
+    dispatch(updateTimer(timerMillis));
   },
 });
 

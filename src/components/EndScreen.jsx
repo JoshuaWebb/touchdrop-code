@@ -3,6 +3,8 @@ import React from 'react';
 import './EndScreen.css';
 import Menu from './Menu';
 
+import { millisecondsToTimestamp } from '../util';
+
 const EndScreen = (props) => {
   const {
     gameMode,
@@ -10,6 +12,7 @@ const EndScreen = (props) => {
     blockCount,
     reset,
     mainMenu,
+    timerMillis,
   } = props;
 
   const endScreenMenuItems = [
@@ -34,12 +37,12 @@ const EndScreen = (props) => {
     },
     {
       name: "Time",
-      value: "TODO", // TODO
+      value: millisecondsToTimestamp(timerMillis),
     },
   ].map(stat => (
-      <div class="row" key={stat.name}>
-        <span class="name">{stat.name}: </span>
-        <span class="value">{stat.value}</span>
+      <div className="row" key={stat.name}>
+        <span className="name">{stat.name}: </span>
+        <span className="value">{stat.value}</span>
       </div>
     )
   );
@@ -47,7 +50,7 @@ const EndScreen = (props) => {
   return (
     <div className="end-screen">
       <div>
-        <h1 class="mode-name">{gameMode}</h1>
+        <h1 className="mode-name">{gameMode}</h1>
         <h1>FINISH</h1>
       </div>
       <div className="statistics">

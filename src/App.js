@@ -251,10 +251,24 @@ class App extends Component {
     this.rollNextPiece();
 
     // TODO: "READY" / "GO"
+    this.lastPlayingTime = new Date();
+    this.totalTimerMillis = 0;
   }
 
   pause() {
-    this.props.setGameState(GAMESTATE_PAUSED);
+    let newState = GAMESTATE_PAUSED;
+    const now = new Date();
+
+    if (this.props.gameState === GAMESTATE_PAUSED) {
+      newState = GAMESTATE_PLAYING;
+      this.lastPlayingTime = now;
+    } else {
+      const millisDiff = now - this.lastPlayingTime;
+      this.lastPlayingTime = now;
+      this.totalTimerMillis += millisDiff;
+    }
+
+    this.props.setGameState(newState);
   }
 
   mainMenu() {
@@ -489,6 +503,10 @@ class App extends Component {
     );
 
     if (this.props.gameState === GAMESTATE_PLAYING) {
+      const now = new Date();
+      const millisDiff = now - this.lastPlayingTime;
+      this.lastPlayingTime = now;
+      this.totalTimerMillis += millisDiff;
       // Checking more than once per piece is redundant at the moment because
       // you can currently place the piece anywhere, but if we change over to
       // using a reference piece we'll need to check every time the reference
@@ -557,6 +575,8 @@ class App extends Component {
       this.pieceDebug.next = false;
     }
 
+    this.props.updateTimer(this.totalTimerMillis);
+
     // save the input from this frame
     // maintain the `isDown` state across frames
     var temp = this.oldGameInput;
@@ -604,6 +624,7 @@ class App extends Component {
           linesCleared={this.props.linesCleared}
           reset={this.start}
           mainMenu={this.mainMenu}
+          timerMillis={this.props.timerMillis}
         />
       );
     }
@@ -623,6 +644,7 @@ class App extends Component {
         linesCleared={this.props.linesCleared}
         blockCount={this.props.blockCount}
         lineTarget={this.props.lineTarget}
+        timerMillis={this.props.timerMillis}
         gameMode={this.props.gameMode}
         reset={this.start}
         mainMenu={this.mainMenu}
