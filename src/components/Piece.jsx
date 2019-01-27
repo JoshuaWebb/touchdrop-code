@@ -54,6 +54,31 @@ export function placeBlock(x, y, piece, orientation, field) {
   }
 }
 
+export function checkPlaceability(x, y, piece, orientation, field) {
+  if (piece !== PIECE_NONE &&
+      orientation !== -1 &&
+      x !== -1 &&
+      y !== -1
+  ) {
+    // TODO: check if the piece has a valid path to get
+    // to this position from the top.
+    //
+    // Idea: Instead of a consant reference point at the top,
+    // ave a regular piece dropping slowly and move it
+    // left/right as the player drags the destination left/right
+    // if the regular piece becomes obstructed, the player can
+    // no longer move it in that direction, and if the piece
+    // lands in a lockable position before the player lets go
+    // lock the piece. The dragging should assume optimal play
+    // including valid spins/kicks.
+    const collides = checkCollision(x, y, piece, orientation, field);
+    const supported = !collides && checkCollision(x, y + 1, piece, orientation, field);
+    return !collides && supported;
+  }
+
+  return false;
+}
+
 export function checkCollision(x, y, piece, orientation, field) {
   const blocksX = allPieceDataX[piece][orientation];
   const blocksY = allPieceDataY[piece][orientation];

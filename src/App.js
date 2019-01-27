@@ -9,7 +9,7 @@ import BagRandomizer from './randomizers/BagRandomizer';
 import {
   fieldWidthInBlocks, fieldHeightInBlocks,
   blockSizeInUnits, hiddenHeight,
-  GAMESTATE_PAUSED, GAMESTATE_MENU, GAMESTATE_END,
+  GAMESTATE_PAUSED, GAMESTATE_MENU, GAMESTATE_END, GAMESTATE_PLAYING,
   GAMEMODE_ZEN,
   GAMEMODE_LINE_TARGET,
 } from './constants';
@@ -18,7 +18,16 @@ import {
   placeBlock, PIECE_NONE, ORIENTATION_NONE,
   ORIENTATION_UP, ORIENTATION_RIGHT,
   ORIENTATION_DOWN, ORIENTATION_LEFT,
+  checkPlaceability,
 } from './components/Piece';
+
+
+const orientations = [
+  ORIENTATION_LEFT,
+  ORIENTATION_UP,
+  ORIENTATION_RIGHT,
+  ORIENTATION_DOWN
+];
 
 class App extends Component {
   constructor(props) {
@@ -95,13 +104,6 @@ class App extends Component {
     //
     // Orientation selectors
     //
-    const orientations = [
-      ORIENTATION_LEFT,
-      ORIENTATION_UP,
-      ORIENTATION_RIGHT,
-      ORIENTATION_DOWN
-    ];
-
     const osMargin = 16;
     const osSize = 70;
     const osYStart = -yOffset + osMargin;
@@ -459,6 +461,24 @@ class App extends Component {
     this.props.nextPiece(nextPiece, nextPieces);
   }
 
+  checkGameOver(piece, field) {
+    // if there's any slot we can place the piece in any orientation
+    // the player can still "continue", even if that will still lead
+    // to a game over.
+    for (let r = 0; r < field.blocks.length; r++) {
+      let row = field.blocks[r];
+      for (let c = 0; c < row.length; c++) {
+        for (let o of orientations) {
+          if (checkPlaceability(c, r, piece, o, field)) {
+            return false;
+          }
+        }
+      }
+    }
+
+    return true;
+  }
+
   gameLoop() {
     this.props.setActiveGridPosition(this.activePosition);
     this.props.cyclePieces(this.pieceDebug);
@@ -468,66 +488,74 @@ class App extends Component {
       this.field
     );
 
-    // TODO: check for totally unplaceable situation / game over
-
-    if (this.place) {
-      var placed = false;
-      if (this.props.placeable) {
-        // update our internal field
-        placeBlock(
-          this.activePosition.col, this.activePosition.row,
-          this.props.currentPiece, this.orientation,
-          this.field
-        );
-
-        var lines = this.doLineClears(this.field);
-        this.linesCleared += lines;
-        this.props.updateStats(this.linesCleared);
-
-        // TODO: line clear delay / animation??
-        // broadcast to everyone else
-        this.props.placeBlock(this.field);
-
-        placed = true;
+    if (this.props.gameState === GAMESTATE_PLAYING) {
+      // Checking more than once per piece is redundant at the moment because
+      // you can currently place the piece anywhere, but if we change over to
+      // using a reference piece we'll need to check every time the reference
+      // piece moves.
+      let gameIsOver = this.checkGameOver(this.props.currentPiece, this.field);
+      if (gameIsOver) {
+        this.props.setGameState(GAMESTATE_END);
       }
 
-      // Check win/end conditions
-      switch (this.props.gameMode) {
-        case GAMEMODE_ZEN: /* There is no defined goal */ break;
-        case GAMEMODE_LINE_TARGET:
-          if (this.linesCleared >= this.props.lineTarget) {
-            this.props.setGameState(GAMESTATE_END);
-          }
-        break;
+      if (this.place) {
+        var placed = false;
+        if (this.props.placeable) {
+          // update our internal field
+          placeBlock(
+            this.activePosition.col, this.activePosition.row,
+            this.props.currentPiece, this.orientation,
+            this.field
+          );
 
-        // no default
+          var lines = this.doLineClears(this.field);
+          this.linesCleared += lines;
+          this.props.updateStats(this.linesCleared);
+
+          // TODO: line clear delay / animation??
+          // broadcast to everyone else
+          this.props.placeBlock(this.field);
+
+          placed = true;
+        }
+
+        // Check win/end conditions
+        switch (this.props.gameMode) {
+          case GAMEMODE_ZEN: /* There is no defined goal */ break;
+          case GAMEMODE_LINE_TARGET:
+            if (this.linesCleared >= this.props.lineTarget) {
+              this.props.setGameState(GAMESTATE_END);
+            }
+          break;
+
+          // no default
+        }
+
+        // TODO: punishment for trying to drop in a
+        //. non-placeable space? or do we just leave
+        // it hanging as this currently does.
+        this.place = false;
+
+        // TODO: allow placing it as soon as they try
+        // to rotate it if that becomes a valid placement?
+
+        if (placed) {
+          this.activePosition.row = -1;
+          this.activePosition.col = -1;
+          this.orientation = ORIENTATION_NONE;
+          this.rollNextPiece();
+        }
       }
+      // Only do after potentially resetting above
+      // so that we don't highlight the orientation
+      // of the _next_ piece for a single frame if
+      // we select the orientation and the destination
+      // in the same frame.
+      this.props.selectOrientation(this.orientation);
 
-      // TODO: punishment for trying to drop in a
-      //. non-placeable space? or do we just leave
-      // it hanging as this currently does.
-      this.place = false;
-
-      // TODO: allow placing it as soon as they try
-      // to rotate it if that becomes a valid placement?
-
-      if (placed) {
-        this.activePosition.row = -1;
-        this.activePosition.col = -1;
-        this.orientation = ORIENTATION_NONE;
-        this.rollNextPiece();
-      }
+      this.pieceDebug.prev = false;
+      this.pieceDebug.next = false;
     }
-
-    // Only do after potentially resetting above
-    // so that we don't highlight the orientation
-    // of the _next_ piece for a single frame if
-    // we select the orientation and the destination
-    // in the same frame.
-    this.props.selectOrientation(this.orientation);
-
-    this.pieceDebug.prev = false;
-    this.pieceDebug.next = false;
 
     // save the input from this frame
     // maintain the `isDown` state across frames
