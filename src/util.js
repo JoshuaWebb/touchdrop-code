@@ -26,7 +26,6 @@ export function millisecondsToTimestamp(totalMs) {
   var hours = "";
   if (minutes > 59) {
     hours = Math.floor(minutes / 60);
-    hours = (hours >= 10) ? hours : "0" + hours;
     minutes = minutes - (hours * 60);
     minutes = (minutes >= 10) ? minutes : "0" + minutes;
   }

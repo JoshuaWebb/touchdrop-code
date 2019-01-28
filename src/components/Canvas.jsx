@@ -3,6 +3,7 @@ import React from 'react';
 import Field from './Field';
 import Piece from './Piece';
 import LineCount from './LineCount';
+import Timer from './Timer';
 import Button from './Button';
 import OrientationSelector from './OrientationSelector';
 import PreviewPiece from './PreviewPiece';
@@ -49,12 +50,18 @@ const Canvas = (props) => {
       // TODO: calculate the position for this properly...
       const lineCountPositionX = fieldX + 85;
       const lineCountPositionY = fieldY - 10;
+      const timerPositionX = fieldX + 140;
       gameModeHud = <React.Fragment>
         <LineCount
           x={lineCountPositionX}
           y={lineCountPositionY}
           linesCleared={props.linesCleared}
           target={props.lineTarget}
+        />
+        <Timer
+          x={timerPositionX}
+          y={lineCountPositionY}
+          timerMillis={props.timerMillis}
         />
       </React.Fragment>
     } break;
