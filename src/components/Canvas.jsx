@@ -14,7 +14,7 @@ import {
 } from '../constants';
 
 const Canvas = (props) => {
-  const gameHeight = 1200;
+  const gameHeight = 680;
   const viewBox = [window.innerWidth / -2, -gameHeight, window.innerWidth, gameHeight];
 
   const bagDisplay = props.previewSlots.map((ps, i) =>
@@ -84,7 +84,7 @@ const Canvas = (props) => {
   return (
     <svg
       id="game-canvas"
-      preserveAspectRatio="xMidYMax slice"
+      preserveAspectRatio="xMidYMax meet"
       shapeRendering="crispEdges"
       textRendering="optimizeLegibility"
       style={ {
