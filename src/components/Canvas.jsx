@@ -17,12 +17,20 @@ const Canvas = (props) => {
   const gameHeight = 680;
   const viewBox = [window.innerWidth / -2, -gameHeight, window.innerWidth, gameHeight];
 
+  const {
+    config: {
+      blockStyles
+    },
+
+  } = props;
+
   const bagDisplay = props.previewSlots.map((ps, i) =>
     <PreviewPiece
       key={`pp${i}`}
       x={ps.x} y={ps.y}
       width={ps.width} height={ps.height}
       piece={props.nextPieces[i]}
+      blockStyles={blockStyles}
     />
   );
 
@@ -33,6 +41,7 @@ const Canvas = (props) => {
       width={os.width} height={os.height}
       orientation={os.orientation}
       piece={props.currentPiece}
+      blockStyles={blockStyles}
       selected={props.orientation === os.orientation}
     />
   );
@@ -78,6 +87,7 @@ const Canvas = (props) => {
         piece={props.currentPiece}
         orientation={props.orientation}
         placeable={props.placeable}
+        blockStyles={blockStyles}
         blockSize={blockSizeInUnits} />
     : null);
 
@@ -107,6 +117,7 @@ const Canvas = (props) => {
         width={fieldWidth}
         height={fieldHeight}
         blockSize={blockSize}
+        blockStyles={blockStyles}
         rows={fieldRows}
         cols={fieldCols}
         blocks={props.blocks}

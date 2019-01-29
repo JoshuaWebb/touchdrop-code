@@ -3,7 +3,7 @@ import React from 'react';
 import Piece, { PIECE_NONE, ORIENTATION_RIGHT } from './Piece';
 
 const PreviewPiece = (props) => {
-  const { x, y, width, height, piece } = props;
+  const { x, y, width, height, piece, blockStyles } = props;
   if (piece === undefined || piece === PIECE_NONE) {
     return null;
   }
@@ -17,6 +17,7 @@ const PreviewPiece = (props) => {
       piece={piece}
       orientation={orientation}
       blockSize={blockSize}
+      blockStyles={blockStyles}
       cx={x + width / 2}
       cy={y + height / 2}
     />

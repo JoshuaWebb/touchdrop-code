@@ -190,7 +190,11 @@ function getHeight (piece, orientation) {
 }
 
 const Piece = (props) => {
-  const { piece, orientation, blockSize, cx, cy, x, y, placeable } = props;
+  const {
+    piece, orientation, blockSize, placeable,
+    cx, cy, x, y,
+    blockStyles,
+  } = props;
 
   if (piece === PIECE_NONE || orientation === ORIENTATION_NONE)
     return null;
@@ -224,6 +228,7 @@ const Piece = (props) => {
           y={yOffset + y * blockSize}
           placeable={placeable}
           piece={piece}
+          blockStyles={blockStyles}
           blockSize={blockSize} />
       );
     })

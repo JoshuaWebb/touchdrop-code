@@ -21,6 +21,7 @@ import {
   checkPlaceability,
 } from './components/Piece';
 
+import Block from './components/Block';
 
 const orientations = [
   ORIENTATION_LEFT,
@@ -28,6 +29,20 @@ const orientations = [
   ORIENTATION_RIGHT,
   ORIENTATION_DOWN
 ];
+
+const config = {
+  // TODO: css?
+  //       more advanced skinning / shapes for blocks?
+  blockStyles: [
+    { fill: '#708090' }, // I
+    { fill: '#f5c635' }, // L
+    { fill: '#ee8817' }, // O
+    { fill: '#47b450' }, // Z
+    { fill: '#ee575b' }, // T
+    { fill: '#9155f4' }, // J
+    { fill: '#009fd4' }, // S
+  ]
+};
 
 class App extends Component {
   constructor(props) {
@@ -641,6 +656,7 @@ class App extends Component {
         orientation={this.props.orientation}
         placeable={this.props.placeable}
         blocks={this.props.field.blocks}
+        config={config}
         linesCleared={this.props.linesCleared}
         blockCount={this.props.blockCount}
         lineTarget={this.props.lineTarget}

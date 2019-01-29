@@ -25,6 +25,7 @@ class Field extends Component {
       width, height,
       blockSize,
       rows, cols,
+      blockStyles,
       activePosition: {
         row: selectedRow,
         col: selectedCol
@@ -44,6 +45,7 @@ class Field extends Component {
             x={x + c * blockSize}
             y={y + r * blockSize}
             blockSize={blockSize}
+            blockStyles={blockStyles}
             piece={currentBlock}
             flash={r === selectedRow && c === selectedCol}
           />;

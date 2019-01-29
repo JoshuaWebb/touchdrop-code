@@ -15,7 +15,7 @@ const selectedStyle = {
 };
 
 const OrientationSelector = (props) => {
-  const { x, y, width, height, piece, orientation, selected, } = props;
+  const { x, y, width, height, piece, orientation, selected, blockStyles } = props;
 
   const padding = 4;
   const cornerRadius = 6;
@@ -37,6 +37,7 @@ const OrientationSelector = (props) => {
         piece={piece}
         orientation={orientation}
         blockSize={blockSize}
+        blockStyles={blockStyles}
         cx={x + width / 2}
         cy={y + height / 2}
       />
