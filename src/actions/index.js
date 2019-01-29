@@ -10,6 +10,7 @@ export const RESIZE = 'RESIZE';
 export const SET_GAME_STATE = 'SET_GAME_STATE'
 export const SET_GAME_MODE = 'SET_GAME_MODE'
 export const UPDATE_TIMER = 'UPDATE_TIMER'
+export const UPDATE_CONFIG = 'UPDATE_CONFIG'
 
 export const setActiveGridPosition = activePosition => ({
   type: SET_ACTIVE_GRID_POSITION,
@@ -75,4 +76,9 @@ export const setGameMode = (newMode) => ({
 export const updateTimer = (timerMillis) => ({
   type: UPDATE_TIMER,
   timerMillis: timerMillis,
+});
+
+export const updateConfig = (config) => ({
+  type: UPDATE_CONFIG,
+  config: config,
 });

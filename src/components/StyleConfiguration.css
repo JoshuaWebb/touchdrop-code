@@ -1,0 +1,36 @@
+.color-config-items {
+  margin: 8px;
+}
+
+.color-config-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.color-config-item * {
+  margin-left: 8px;
+}
+
+.color-config-item svg {
+  margin-left: 0px;
+  overflow: visible;
+}
+
+.color-config-item label {
+}
+
+.color-config-item input[type="text"] {
+  padding: 4px;
+  display: inline-block;
+  width: 7em;
+}
+
+/* The default input is annoying to style because
+ * it supports accessibility. */
+.color-config-item input[type="color"] {
+  width: 0;
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+}

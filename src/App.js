@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import Menu from './components/Menu';
 import EndScreen from './components/EndScreen';
+import { StyleConfiguration } from './containers/Menu';
 import Canvas from './components/Canvas';
 
 import BagRandomizer from './randomizers/BagRandomizer';
@@ -625,6 +626,13 @@ class App extends Component {
   }
 
   render() {
+    return (
+      <StyleConfiguration
+        blockSize={blockSizeInUnits}
+        blockStyles={config.blockStyles}
+      />
+    );
+
     if (this.props.gameState === GAMESTATE_MENU) {
       return (
         <Menu items={this.menuItems} />
