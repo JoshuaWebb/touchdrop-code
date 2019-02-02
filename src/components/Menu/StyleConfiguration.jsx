@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import './StyleConfiguration.css';
+import './Menu.css';
 
 import {
   blockSizeInUnits,
@@ -100,22 +101,21 @@ class StyleConfiguration extends Component {
     );
 
     return (
-      <div className="config-screen">
+      <div className="menu">
         <ul className="color-config-items">
           {items}
         </ul>
-        <span className="button cancel"
-              onClick={this.cancel}>
-          CANCEL
-        </span>
-        <span className="button reset"
-              onClick={this.reset}>
-          RESET TO DEFAULTS
-        </span>
-        <span className="button save"
-              onClick={this.save}>
-          SAVE
-        </span>
+        <ul>
+          <li className="button cancel" onClick={this.cancel}>
+            CANCEL
+          </li>
+          <li className="button reset" onClick={this.reset}>
+            RESET TO DEFAULTS
+          </li>
+          <li className="button save" onClick={this.save}>
+            SAVE
+          </li>
+        </ul>
       </div>
     )
   }

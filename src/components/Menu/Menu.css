@@ -6,7 +6,11 @@
   margin-right: auto;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+}
+
+.menu::before, .menu::after {
+  content: '';  /* Insert pseudo-element */
+  margin: auto; /* Make it push flex items to the center */
 }
 
 .menu ul {
@@ -15,14 +19,12 @@
   padding: 8px;
 }
 
-.menu li {
+.button {
   text-align: center;
   display: block;
   padding: 12px;
   margin: 8px;
   border-radius: 4px;
-  border: solid;
-  border-width: 2px;
   font-size: 24px;
   font-weight: bold;
   background-color: #232323;
@@ -30,10 +32,14 @@
   user-select: none;
 }
 
-.menu li:hover {
+.menu li.button {
+  margin: 16px;
+}
+
+.menu li.button:hover {
   background-color: #434343;
 }
 
-.menu li:active {
+.menu li.button:active {
   background-color: #333333;
 }

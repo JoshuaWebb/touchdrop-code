@@ -9,7 +9,8 @@ const Menu = (props) => {
 
   const menuItems = items.map(item =>
     <li key={item.text}
-        onClick={item.onClick} >
+        onClick={item.onClick}
+        className="button" >
         {item.text}
     </li>
   );

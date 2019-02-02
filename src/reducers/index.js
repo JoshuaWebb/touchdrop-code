@@ -59,8 +59,6 @@ const initialState = {
         Array(fieldWidthInBlocks).fill(PIECE_NONE))
   },
   config: {
-    // TODO: css?
-    //       more advanced skinning / shapes for blocks?
     blockStyles: defaultStyles,
   },
 };
