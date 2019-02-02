@@ -4,15 +4,19 @@
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
-  /* TODO: Center vertically, but allow scrolling when
-  the window is too small to fit the content. We don't
-  want the items to shrink. */
+
+  display: flex;
+  flex-direction: column;
+}
+
+.config-screen::before, .config-screen::after {
+  content: '';  /* Insert pseudo-element */
+  margin: auto; /* Make it push flex items to the center */
 }
 
 .color-config-items {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .color-config-item {
