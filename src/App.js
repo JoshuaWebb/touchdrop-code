@@ -457,6 +457,10 @@ class App extends Component {
   }
 
   checkGameOver(piece, field) {
+    if (piece === PIECE_NONE) {
+      return false;
+    }
+
     // if there's any slot we can place the piece in any orientation
     // the player can still "continue", even if that will still lead
     // to a game over.
