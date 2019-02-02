@@ -8,6 +8,7 @@ html, body {
   overflow: hidden;
   height: 100%;
   width: 100%;
+  overflow-y: auto;
 }
 
 body {
@@ -19,6 +20,10 @@ body {
   background-color: #121212;
 }
 
+svg {
+  display: block;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
@@ -27,15 +32,10 @@ code {
 #root {
   width: 100%;
   height: 100%;
+  position: relative;
 }
 
 text {
   user-select: none;
   font-family: 'Roboto';
-}
-
-.config-screen {
-  height: 100%;
-  width: 100%;
-  overflow-y: scroll;
 }

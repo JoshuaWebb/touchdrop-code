@@ -7,10 +7,12 @@ import {
   CHECK_PLACEABILITY,
   UPDATE_STATS,
   UPDATE_TIMER,
+  UPDATE_CONFIG,
   RESET,
   RESIZE,
   SET_GAME_STATE,
   SET_GAME_MODE,
+  SET_MENU,
 } from '../actions';
 
 import setActiveGridPosition from './setActiveGridPosition';
@@ -21,9 +23,11 @@ import placeBlock from './placeBlock';
 import checkPlaceability from './checkPlaceability';
 import updateStats from './updateStats';
 import updateTimer from './updateTimer';
+import updateConfig from './updateConfig';
 import resize from './resize';
 import setGameState from './setGameState';
 import setGameMode from './setGameMode';
+import setMenu from './setMenu';
 
 // TODO: I think this is probably bad style to be in the component...
 import { PIECE_NONE, ORIENTATION_NONE } from '../components/Piece';
@@ -31,6 +35,7 @@ import { PIECE_NONE, ORIENTATION_NONE } from '../components/Piece';
 import {
   fieldWidthInBlocks, fieldHeightInBlocks,
   GAMESTATE_MENU, GAMESTATE_PLAYING,
+  defaultStyles,
 } from '../constants'
 
 const initialState = {
@@ -56,15 +61,7 @@ const initialState = {
   config: {
     // TODO: css?
     //       more advanced skinning / shapes for blocks?
-    blockStyles: [
-      { fill: '#4bb8ff' }, // I
-      { fill: '#ff8422' }, // L
-      { fill: '#ffdf22' }, // O
-      { fill: '#ff4b4b' }, // Z
-      { fill: '#d25fc0' }, // T
-      { fill: '#1f56e4' }, // J
-      { fill: '#90d83c' }, // S
-    ]
+    blockStyles: defaultStyles,
   },
 };
 
@@ -86,17 +83,22 @@ function reducer(state = initialState, action) {
       return updateStats(state, action);
     case UPDATE_TIMER:
       return updateTimer(state, action);
+    case UPDATE_CONFIG:
+      return updateConfig(state, action);
     case RESIZE:
       return resize(state, action);
     case SET_GAME_STATE:
       return setGameState(state, action);
     case SET_GAME_MODE:
       return setGameMode(state, action);
+    case SET_MENU:
+      return setMenu(state, action);
     case RESET:
       // TODO: take some game options that
       // override the initial state?
       return {
         ...initialState,
+        config: state.config,
         windowWidth: state.windowWidth,
         windowHeight: state.windowHeight,
         gameMode: state.gameMode,

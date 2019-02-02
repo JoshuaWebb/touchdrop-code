@@ -2,7 +2,13 @@ import React, { Component } from 'react';
 
 import './StyleConfiguration.css';
 
-import Piece, { ORIENTATION_UP } from './Piece';
+import {
+  blockSizeInUnits,
+  defaultStyles,
+  MENU_MAIN,
+} from '../../constants';
+
+import Piece, { ORIENTATION_UP } from '../Piece';
 
 class StyleConfiguration extends Component {
   constructor(props) {
@@ -26,17 +32,37 @@ class StyleConfiguration extends Component {
     });
   }
 
+  save = () => {
+    const config = {
+      blockStyles: Object.values(this.state.colors)
+    };
+
+    this.props.updateConfig(config);
+    this.props.setMenu(MENU_MAIN);
+  }
+
+  reset = () => {
+    this.setState({
+      colors: Object.assign({}, defaultStyles),
+    });
+  }
+
+  cancel = () => {
+    this.props.setMenu(MENU_MAIN);
+  }
+
   render() {
-    const { blockSize, blockStyles } = this.props;
+    const { config: { blockStyles } } = this.props;
+    const blockSize = blockSizeInUnits;
 
     const viewBox = [0, 0, blockSize * 4, blockSize * 4];
     const items = blockStyles.map((p, i) =>
-      <li className="color-config-item">
+      <li key={i} className="color-config-item">
         <svg
           shapeRendering="crispEdges"
           preserveAspectRatio="xMidYMid slice"
           width={blockSize * 3}
-          height={blockSize * 3}
+          height={blockSize * 2.25}
           viewBox={viewBox}
         >
           <Piece
@@ -78,6 +104,18 @@ class StyleConfiguration extends Component {
         <ul className="color-config-items">
           {items}
         </ul>
+        <span className="button cancel"
+              onClick={this.cancel}>
+          CANCEL
+        </span>
+        <span className="button reset"
+              onClick={this.reset}>
+          RESET TO DEFAULTS
+        </span>
+        <span className="button save"
+              onClick={this.save}>
+          SAVE
+        </span>
       </div>
     )
   }

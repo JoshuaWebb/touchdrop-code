@@ -1,0 +1,70 @@
+.config-screen {
+  height: 100%;
+  width: 100%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  /* TODO: Center vertically, but allow scrolling when
+  the window is too small to fit the content. We don't
+  want the items to shrink. */
+}
+
+.color-config-items {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.color-config-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.color-config-item * {
+  margin-left: 12px;
+}
+
+.color-config-item svg {
+  margin-left: 0px;
+  overflow: visible;
+}
+
+.color-config-item input[type="text"] {
+  padding: 6px;
+  border-radius: 4px;
+  display: inline-block;
+  width: 6em;
+}
+
+/* The default input is annoying to style because
+ * it supports accessibility; I might want to revise
+ * this decision in the future. */
+.color-config-item input[type="color"] {
+  width: 0;
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.button {
+  display: block;
+  text-align: center;
+  padding: 12px 18px;
+  margin: 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 24px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.button.save {
+  background-color: #afabec;
+  color: #121212;
+}
+
+.button.cancel, .button.reset {
+  color: white;
+  background-color: #232323;
+}

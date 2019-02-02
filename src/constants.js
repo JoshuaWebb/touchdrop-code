@@ -6,8 +6,21 @@ export const GAMESTATE_END = 'END';
 export const GAMEMODE_ZEN = 'ZEN';
 export const GAMEMODE_LINE_TARGET = 'LINE TARGET';
 
+export const MENU_MAIN = 'MAIN';
+export const MENU_STYLE_SETTINGS = 'STYLE';
+
 export const blockSizeInUnits = 26;
 
 export const fieldWidthInBlocks = 10;
 export const fieldHeightInBlocks = 20;
 export const hiddenHeight = 3;
+
+export const defaultStyles = [
+  { fill: '#708090' }, // I
+  { fill: '#f5c635' }, // L
+  { fill: '#ee8817' }, // O
+  { fill: '#47b450' }, // Z
+  { fill: '#ee575b' }, // T
+  { fill: '#9155f4' }, // J
+  { fill: '#009fd4' }, // S
+];

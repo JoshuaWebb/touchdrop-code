@@ -1,18 +1,25 @@
 import { connect } from 'react-redux';
 
-import _StyleConfiguration from '../components/StyleConfiguration';
+import _MainMenu from '../components/Menu/MainMenu';
+import _StyleConfiguration from '../components/Menu/StyleConfiguration';
+
 import {
+  setMenu,
   setGameMode,
   updateConfig,
 } from '../actions/index';
 
 const mapStateToProps = state => ({
   config: state.config,
+  menu: state.menu,
   gameMode: state.gameMode,
   lineTarget: state.lineTarget,
 });
 
 const mapDispatchToProps = dispatch => ({
+  setMenu: (menu) => {
+    dispatch(setMenu(menu));
+  },
   setGameMode: (newMode) => {
     dispatch(setGameMode(newMode));
   },
@@ -21,7 +28,10 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-export const StyleConfiguration = connect(
+const connectFn = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(_StyleConfiguration);
+);
+
+export const MainMenu = connectFn(_MainMenu);
+export const StyleConfiguration = connectFn(_StyleConfiguration);

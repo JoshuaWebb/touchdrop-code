@@ -17,6 +17,8 @@ import {
 } from '../actions/index';
 
 const mapStateToProps = state => ({
+  menu: state.menu,
+  config: state.config,
   gameState: state.gameState,
   gameMode: state.gameMode,
   activePosition: state.activePosition,

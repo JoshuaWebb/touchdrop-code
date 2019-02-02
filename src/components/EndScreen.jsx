@@ -1,7 +1,7 @@
 import React from 'react';
 
 import './EndScreen.css';
-import Menu from './Menu';
+import Menu from './Menu/Menu';
 
 import { millisecondsToTimestamp } from '../util';
 
