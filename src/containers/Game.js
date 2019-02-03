@@ -14,6 +14,7 @@ import {
   setGameState,
   setGameMode,
   updateTimer,
+  loadConfig,
 } from '../actions/index';
 
 const mapStateToProps = state => ({
@@ -72,6 +73,9 @@ const mapDispatchToProps = dispatch => ({
   },
   updateTimer: (timerMillis) => {
     dispatch(updateTimer(timerMillis));
+  },
+  loadConfig: () => {
+    dispatch(loadConfig());
   },
 });
 

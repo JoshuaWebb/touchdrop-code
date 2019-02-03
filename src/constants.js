@@ -8,6 +8,7 @@ export const GAMEMODE_LINE_TARGET = 'LINE TARGET';
 
 export const MENU_MAIN = 'MAIN';
 export const MENU_STYLE_SETTINGS = 'STYLE';
+export const MENU_IMPORT_EXPORT = 'IMPORT_EXPORT';
 
 export const blockSizeInUnits = 26;
 

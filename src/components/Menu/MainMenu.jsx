@@ -6,6 +6,7 @@ import {
   GAMEMODE_ZEN,
   GAMEMODE_LINE_TARGET,
   MENU_STYLE_SETTINGS,
+  MENU_IMPORT_EXPORT,
 } from '../../constants';
 
 const MainMenu = (props) => {
@@ -31,6 +32,12 @@ const MainMenu = (props) => {
       text: 'CUSTOMIZE STYLE',
       onClick: () => {
         props.setMenu(MENU_STYLE_SETTINGS);
+      },
+    },
+    {
+      text: 'IMPORT / EXPORT SETTINGS',
+      onClick: () => {
+        props.setMenu(MENU_IMPORT_EXPORT);
       },
     },
   ];

@@ -59,3 +59,94 @@ export function mergeDeep(target, source) {
   }
   return output;
 }
+
+function splitMax(string, delimiter, maxSplits) {
+  let arr = string.split(delimiter);
+  let result = arr.splice(0, maxSplits - 1);
+
+  result.push(arr.join(delimiter));
+
+  return result;
+}
+
+// Facade over localStorage that handles basic
+// numbers, strings, objects and arrays.
+//
+// Note if the object contains sub-objects of
+// other types, these will most likely not be
+// detected and lost in the conversion.
+export const persistedData = {
+  set: function(key, value) {
+    if (!key) {return;}
+
+    if (value === null || value === undefined) {
+      window.localStorage.removeItem(key);
+    }
+
+    const ctor = value.constructor.name;
+    let stringValue;
+    // This handles simple property based objects
+    // and arrays but it doesn't support classes
+    // the caller should handle serialization
+    // themselves.
+    switch (ctor) {
+      case 'Array': // through
+      case 'Object': stringValue = JSON.stringify(value); break;
+      case 'String': stringValue = value; break;
+      case 'Number': stringValue = value.toString(); break;
+      default: throw new Error(`Type ${ctor} not supported`);
+    }
+
+    window.localStorage.setItem(key, `pd:${ctor}:${stringValue}`);
+  },
+
+  get: function(key) {
+    var value = localStorage.getItem(key);
+
+    // values are always strings, so if we
+    // get a literal null, it wasn't in there.
+    if (value === null) {return;}
+
+    const maxParts = 3;
+    const parts = splitMax(value, ':', maxParts);
+    if (parts.length < maxParts || parts[0] !== 'pd') {
+      // value was definitely not stored using this facade
+      return value;
+    }
+
+    // At this point we assume the value was stored using
+    // the facade, if it wasn't then we've probably got
+    // a bug somewhere else (OR someone has been messing
+    // with the data manually).
+    const ctorName = parts[1];
+    const stringValue = parts[2];
+    let objectValue;
+    switch (ctorName) {
+      case 'Array': // through
+      case 'Object': objectValue = JSON.parse(stringValue); break;
+      case 'String': objectValue = stringValue; break;
+      case 'Number': objectValue = Number(stringValue); break;
+      default: throw new Error(
+        `Non-facade value '${value}' was stored` +
+        `but was attempted to be retrieved through the facade.`
+      );
+    }
+
+    return objectValue;
+  }
+}
+
+export function objectsHaveSameKeys(a, b) {
+  const aKeys = Object.keys(a);
+  const bKeys = Object.keys(b);
+  const aSet = new Set(aKeys);
+  const bSet = new Set(bKeys);
+
+  if (aSet.size !== bSet.size) return false;
+
+  for (let item of aSet) {
+    if (!bSet.has(item)) return false;
+  }
+
+  return true;
+}

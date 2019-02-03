@@ -12,6 +12,7 @@ export const SET_GAME_MODE = 'SET_GAME_MODE'
 export const SET_MENU = 'SET_MENU'
 export const UPDATE_TIMER = 'UPDATE_TIMER'
 export const UPDATE_CONFIG = 'UPDATE_CONFIG'
+export const LOAD_CONFIG = 'LOAD_CONFIG'
 
 export const setActiveGridPosition = activePosition => ({
   type: SET_ACTIVE_GRID_POSITION,
@@ -87,4 +88,8 @@ export const updateTimer = (timerMillis) => ({
 export const updateConfig = (config) => ({
   type: UPDATE_CONFIG,
   config: config,
+});
+
+export const loadConfig = () => ({
+  type: LOAD_CONFIG,
 });

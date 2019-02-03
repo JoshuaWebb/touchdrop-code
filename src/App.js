@@ -59,6 +59,7 @@ class App extends Component {
     this.mouseUp   = this.mouseUp.bind(this);
 
     this.init();
+    props.loadConfig();
   }
 
   initialiseLayout() {

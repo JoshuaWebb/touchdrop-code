@@ -8,6 +8,7 @@ import {
   UPDATE_STATS,
   UPDATE_TIMER,
   UPDATE_CONFIG,
+  LOAD_CONFIG,
   RESET,
   RESIZE,
   SET_GAME_STATE,
@@ -23,7 +24,7 @@ import placeBlock from './placeBlock';
 import checkPlaceability from './checkPlaceability';
 import updateStats from './updateStats';
 import updateTimer from './updateTimer';
-import updateConfig from './updateConfig';
+import { loadConfig, updateConfig } from './config';
 import resize from './resize';
 import setGameState from './setGameState';
 import setGameMode from './setGameMode';
@@ -59,6 +60,7 @@ const initialState = {
         Array(fieldWidthInBlocks).fill(PIECE_NONE))
   },
   config: {
+    version: 0,
     blockStyles: defaultStyles,
   },
 };
@@ -83,6 +85,8 @@ function reducer(state = initialState, action) {
       return updateTimer(state, action);
     case UPDATE_CONFIG:
       return updateConfig(state, action);
+    case LOAD_CONFIG:
+      return loadConfig(state);
     case RESIZE:
       return resize(state, action);
     case SET_GAME_STATE:

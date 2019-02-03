@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 
 import _MainMenu from '../components/Menu/MainMenu';
 import _StyleConfiguration from '../components/Menu/StyleConfiguration';
+import _ImportExportSettings from '../components/Menu/ImportExportSettings';
 
 import {
   setMenu,
@@ -35,3 +36,4 @@ const connectFn = connect(
 
 export const MainMenu = connectFn(_MainMenu);
 export const StyleConfiguration = connectFn(_StyleConfiguration);
+export const ImportExportSettings = connectFn(_ImportExportSettings);
