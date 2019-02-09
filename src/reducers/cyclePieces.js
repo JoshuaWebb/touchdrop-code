@@ -1,4 +1,3 @@
-// TODO: this is temporary to debug all the pieces "quickly"
 function cyclePieces(state, action) {
   if (!action.next && !action.prev) {
     return state;
@@ -24,4 +23,11 @@ function cyclePieces(state, action) {
   };
 }
 
-export default cyclePieces;
+// replace with a dummy function in prod builds
+// so we don't have to worry about "leaving" it
+// in somehow.
+const exportFn = ((process.env.NODE_ENV === 'production')
+  ? (function() {})
+  : cyclePieces);
+
+export default exportFn;

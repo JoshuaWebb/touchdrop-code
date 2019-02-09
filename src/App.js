@@ -481,7 +481,11 @@ class App extends Component {
 
   gameLoop() {
     this.props.setActiveGridPosition(this.activePosition);
-    this.props.cyclePieces(this.pieceDebug);
+
+    if (process.env.NODE_ENV !== 'production') {
+      this.props.cyclePieces(this.pieceDebug);
+    }
+
     this.props.checkPlaceability(
       this.activePosition.col, this.activePosition.row,
       this.props.currentPiece, this.orientation,
