@@ -4,6 +4,13 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 
+// Polyfills
+// Required for Safari
+import 'core-js/fn/object/assign';
+import 'core-js/fn/object/values';
+import 'core-js/es6/set';
+import 'core-js/es6/symbol';
+
 import './index.css';
 import Game from './containers/Game';
 import reducer from './reducers';
