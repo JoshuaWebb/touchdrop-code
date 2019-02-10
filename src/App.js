@@ -288,6 +288,7 @@ class App extends Component {
   }
 
   touchMove(event) {
+    event.preventDefault();
     this.activeTouches = event.touches.length;
 
     // Note: if multiple touches are inside the field
