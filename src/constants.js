@@ -25,3 +25,25 @@ export const defaultStyles = [
   { fill: '#9155f4' }, // J
   { fill: '#009fd4' }, // S
 ];
+
+// https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
+var testPassiveSupported = false;
+
+try {
+  var options = {
+    get passive() { // This function will be called when the browser
+                    //     attempts to access the passive property.
+      testPassiveSupported = true;
+
+      // make linter happy
+      return true;
+    }
+  };
+
+  window.addEventListener("test", options, options);
+  window.removeEventListener("test", options, options);
+} catch(err) {
+  testPassiveSupported = false;
+}
+
+export const passiveSupported = testPassiveSupported;

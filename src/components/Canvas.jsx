@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import Field from './Field';
 import Piece from './Piece';
@@ -11,17 +11,33 @@ import PreviewPiece from './PreviewPiece';
 import {
   blockSizeInUnits,
   GAMEMODE_LINE_TARGET,
+  passiveSupported,
 } from '../constants';
 
-const Canvas = (props) => {
+class Canvas extends Component {
+  preventDefault = (e) => e.preventDefault();
+
+  componentDidMount() {
+    // We need this for iOS to prevent "overscroll" and
+    // "pull down to refresh"
+    window.addEventListener('touchmove', this.preventDefault,
+      passiveSupported ? { passive: false } : false
+    );
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('touchmove', this.preventDefault);
+  }
+
+  render() {
   const gameHeight = 680;
   const viewBox = [window.innerWidth / -2, -gameHeight, window.innerWidth, gameHeight];
+  const props = this.props;
 
   const {
     config: {
       blockStyles
     },
-
   } = props;
 
   const bagDisplay = props.previewSlots.map((ps, i) =>
@@ -148,6 +164,7 @@ const Canvas = (props) => {
       />
     </svg>
   );
-};
+}
+}
 
 export default Canvas;
