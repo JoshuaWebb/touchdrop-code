@@ -9,7 +9,8 @@ import BagRandomizer from './randomizers/BagRandomizer';
 import {
   fieldWidthInBlocks, fieldHeightInBlocks,
   blockSizeInUnits, hiddenHeight,
-  GAMESTATE_PAUSED, GAMESTATE_MENU, GAMESTATE_END, GAMESTATE_PLAYING,
+  totalReadyMillis,
+  GAMESTATE_PAUSED, GAMESTATE_MENU, GAMESTATE_END, GAMESTATE_PLAYING, GAMESTATE_READY,
   GAMEMODE_ZEN,
   GAMEMODE_LINE_TARGET,
 } from './constants';
@@ -180,6 +181,10 @@ class App extends Component {
     // and redux when we initialise / reset the game.
     this.linesCleared = 0;
     this.orientation = ORIENTATION_NONE;
+    this.readyTimerMillis = totalReadyMillis;
+    // TODO: Should the animation explicitly use the same source of
+    // randomness/be captured for (future) replay purposes?
+    this.readyAnimationIndex = Math.floor(Math.random() * 4);
   }
 
   start() {
@@ -193,6 +198,10 @@ class App extends Component {
   }
 
   pause() {
+    if (this.props.gameState === GAMESTATE_READY) {
+      return;
+    }
+
     let newState = GAMESTATE_PAUSED;
     const now = new Date();
 
@@ -257,6 +266,8 @@ class App extends Component {
       this.activePosition.row = fp.row;
       this.activePosition.col = fp.col;
     }
+
+    this.place = false;
   }
 
   dragEnd() {
@@ -436,22 +447,29 @@ class App extends Component {
   }
 
   gameLoop() {
-    this.props.setActiveGridPosition(this.activePosition);
-
     if (process.env.NODE_ENV !== 'production') {
       this.props.cyclePieces(this.pieceDebug);
     }
 
-    this.props.checkPlaceability(
-      this.activePosition.col, this.activePosition.row,
-      this.props.currentPiece, this.orientation,
-      this.field
-    );
+    const now = new Date();
+    const millisDiff = now - this.lastPlayingTime;
+    this.lastPlayingTime = now;
 
-    if (this.props.gameState === GAMESTATE_PLAYING) {
-      const now = new Date();
-      const millisDiff = now - this.lastPlayingTime;
-      this.lastPlayingTime = now;
+    if (this.props.gameState === GAMESTATE_READY) {
+      this.readyTimerMillis -= millisDiff;
+      this.props.updateReady(this.readyTimerMillis);
+      if (this.readyTimerMillis <= 0) {
+        this.props.setGameState(GAMESTATE_PLAYING);
+      }
+    } else if (this.props.gameState === GAMESTATE_PLAYING) {
+      this.props.setActiveGridPosition(this.activePosition);
+
+      this.props.checkPlaceability(
+        this.activePosition.col, this.activePosition.row,
+        this.props.currentPiece, this.orientation,
+        this.field
+      );
+
       this.totalTimerMillis += millisDiff;
       // Checking more than once per piece is redundant at the moment because
       // you can currently place the piece anywhere, but if we change over to
@@ -579,6 +597,8 @@ class App extends Component {
         blockCount={this.props.blockCount}
         lineTarget={this.props.lineTarget}
         timerMillis={this.props.timerMillis}
+        readyMillis={this.props.readyMillis}
+        readyAnimationIndex={this.readyAnimationIndex}
         gameMode={this.props.gameMode}
         reset={this.start}
         mainMenu={this.mainMenu}

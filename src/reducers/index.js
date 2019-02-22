@@ -5,6 +5,7 @@ import {
   NEXT_PIECE,
   PLACE_BLOCK,
   CHECK_PLACEABILITY,
+  UPDATE_READY,
   UPDATE_STATS,
   UPDATE_TIMER,
   UPDATE_CONFIG,
@@ -22,6 +23,7 @@ import selectOrientation from './selectOrientation';
 import nextPiece from './nextPiece';
 import placeBlock from './placeBlock';
 import checkPlaceability from './checkPlaceability';
+import updateReady from './updateReady';
 import updateStats from './updateStats';
 import updateTimer from './updateTimer';
 import { loadConfig, updateConfig } from './config';
@@ -35,8 +37,9 @@ import { PIECE_NONE, ORIENTATION_NONE } from '../components/Piece';
 
 import {
   fieldWidthInBlocks, fieldHeightInBlocks,
-  GAMESTATE_MENU, GAMESTATE_PLAYING,
+  GAMESTATE_MENU, GAMESTATE_READY,
   defaultStyles,
+  totalReadyMillis,
 } from '../constants'
 
 const initialState = {
@@ -54,6 +57,7 @@ const initialState = {
   linesCleared: 0,
   lineTarget: 40,
   timerMillis: 0,
+  readyMillis: totalReadyMillis,
   field: {
     blocks :
       Array(fieldHeightInBlocks).fill(0).map(r =>
@@ -79,6 +83,8 @@ function reducer(state = initialState, action) {
       return placeBlock(state, action);
     case CHECK_PLACEABILITY:
       return checkPlaceability(state, action);
+    case UPDATE_READY:
+      return updateReady(state, action);
     case UPDATE_STATS:
       return updateStats(state, action);
     case UPDATE_TIMER:
@@ -104,7 +110,7 @@ function reducer(state = initialState, action) {
         windowWidth: state.windowWidth,
         windowHeight: state.windowHeight,
         gameMode: state.gameMode,
-        gameState: GAMESTATE_PLAYING,
+        gameState: GAMESTATE_READY,
       };
     default:
       return state;

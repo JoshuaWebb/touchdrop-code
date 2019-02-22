@@ -4,6 +4,7 @@ import Field from './Field';
 import Piece from './Piece';
 import LineCount from './LineCount';
 import Timer from './Timer';
+import ReadyGo from './ReadyGo';
 import Button from './Button';
 import OrientationSelector from './OrientationSelector';
 import PreviewPiece from './PreviewPiece';
@@ -12,6 +13,7 @@ import {
   blockSizeInUnits,
   GAMEMODE_LINE_TARGET,
   passiveSupported,
+  totalReadyMillis,
 } from '../constants';
 
 class Canvas extends Component {
@@ -38,6 +40,8 @@ class Canvas extends Component {
     config: {
       blockStyles
     },
+    readyMillis,
+    readyAnimationIndex,
   } = props;
 
   const bagDisplay = props.previewSlots.map((ps, i) =>
@@ -107,6 +111,7 @@ class Canvas extends Component {
         blockSize={blockSizeInUnits} />
     : null);
 
+  const fieldClipId = "field-clip";
   return (
     <svg
       id="game-canvas"
@@ -126,6 +131,15 @@ class Canvas extends Component {
       onMouseUp={props.mouseUp}
       viewBox={viewBox}
     >
+      <defs>
+        <clipPath id={fieldClipId} >
+          <rect
+            x={fieldX}
+            y={fieldY}
+            width={fieldWidth}
+            height={fieldHeight} />
+        </clipPath>
+      </defs>
       <Field
         activePosition={props.activePosition}
         x={fieldX}
@@ -161,6 +175,14 @@ class Canvas extends Component {
         color="#3e3e3e"
         pressedColor="#292929"
         onPressed={props.mainMenu}
+      />
+      <ReadyGo
+        totalReadyMillis={totalReadyMillis}
+        remainingMillis={readyMillis}
+        animationIndex={readyAnimationIndex}
+        maskId={fieldClipId}
+        x={fieldX + fieldWidth/2}
+        y={fieldY + fieldHeight/2}
       />
     </svg>
   );
