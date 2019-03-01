@@ -1,0 +1,53 @@
+/* TODO: use some preprocessor that understands variables, e.g. sass or less
+ * so we can share values with the keyframes
+ */
+.ready, .go {
+  stroke-width: 6;
+  stroke: transparent;
+  fill: white;
+  font-size: 50pt;
+  font-weight: 500;
+  letter-spacing: 3pt;
+}
+
+.ready-outline, .go-outline {
+  stroke: #838383;
+}
+
+/* This allows react to generate the appropriate
+   vendor prefixes for 'animation' */
+.go { animation: go 250ms; }
+.ready-0 { animation: ready-0 250ms; }
+.ready-1 { animation: ready-1 250ms; }
+.ready-2 { animation: ready-2 250ms; }
+.ready-3 { animation: ready-3 250ms; }
+
+@keyframes go {
+  0% { font-size: 0pt; }
+  75% { font-size: 55pt; }
+  100% { font-size: 50pt; }
+}
+
+@keyframes ready-0 {
+  0% { transform: translate(-300pt,0); }
+  75% { transform: translate(10pt,0); }
+  100% { transform: translate(0,0); }
+}
+
+@keyframes ready-1 {
+  0% { transform: translate(300pt,0); }
+  75% { transform: translate(-10pt,0); }
+  100% { transform: translate(0,0); }
+}
+
+@keyframes ready-2 {
+  0% { transform: translate(0, 300pt); }
+  75% { transform: translate(0, -10pt); }
+  100% { transform: translate(0,0); }
+}
+
+@keyframes ready-3 {
+  0% { transform: translate(0, -300pt); }
+  75% { transform: translate(0, 10pt); }
+  100% { transform: translate(0,0); }
+}

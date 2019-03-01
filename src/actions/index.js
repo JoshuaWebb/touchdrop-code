@@ -10,6 +10,7 @@ export const RESIZE = 'RESIZE';
 export const SET_GAME_STATE = 'SET_GAME_STATE'
 export const SET_GAME_MODE = 'SET_GAME_MODE'
 export const SET_MENU = 'SET_MENU'
+export const UPDATE_READY = 'UPDATE_READY'
 export const UPDATE_TIMER = 'UPDATE_TIMER'
 export const UPDATE_CONFIG = 'UPDATE_CONFIG'
 export const LOAD_CONFIG = 'LOAD_CONFIG'
@@ -78,6 +79,11 @@ export const setGameMode = (newMode) => ({
 export const setMenu = (menu) => ({
   type: SET_MENU,
   menu: menu,
+});
+
+export const updateReady = (readyMillis) => ({
+  type: UPDATE_READY,
+  readyMillis: readyMillis,
 });
 
 export const updateTimer = (timerMillis) => ({
