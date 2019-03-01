@@ -1,5 +1,6 @@
 import React from 'react';
 
+import OutlineText from './OutlineText';
 import './ReadyGo.css';
 
 const ReadyGo = (props) => {
@@ -25,23 +26,15 @@ const ReadyGo = (props) => {
   const readyClass = showReady ? "ready" : "go";
   const animation = showReady ? `ready-${animationIndex}` : "";
 
-  const textFill= <text
-        x={x}
-        y={y}
-        className={readyClass}
-        textAnchor="middle"
-        alignmentBaseline="central"
-        dominantBaseline="central"
-       >
-         {showReady ? 'READY' : 'GO'}
-       </text>;
-
-  const textOutline = React.cloneElement(textFill, {className: `${readyClass} ${readyClass}-outline`});
   return (
     <g clipPath={`url(#${maskId})`} >
       <g className={animation}>
-        {textOutline}
-        {textFill}
+        <OutlineText
+          x={x}
+          y={y}
+          className={readyClass}
+          text={showReady ? 'READY' : 'GO'}
+         />
       </g>
     </g>
   );

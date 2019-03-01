@@ -10,10 +10,6 @@
   letter-spacing: 3pt;
 }
 
-.ready-outline, .go-outline {
-  stroke: #838383;
-}
-
 /* This allows react to generate the appropriate
    vendor prefixes for 'animation' */
 .go { animation: go 250ms; }
