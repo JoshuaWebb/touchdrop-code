@@ -23,17 +23,12 @@ const ReadyGo = (props) => {
 
   const showReady = remainingMillis > (totalReadyMillis / 2);
   const readyClass = showReady ? "ready" : "go";
-  const animMillis = 250;
-  const animation = (showReady
-    ? `ready-${animationIndex} ${animMillis}ms`
-    : `go ${animMillis}ms`
-  );
+  const animation = showReady ? `ready-${animationIndex}` : "";
 
   const textFill= <text
         x={x}
         y={y}
         className={readyClass}
-        style={ {animation: animation} }
         textAnchor="middle"
         alignmentBaseline="central"
         dominantBaseline="central"
@@ -43,9 +38,11 @@ const ReadyGo = (props) => {
 
   const textOutline = React.cloneElement(textFill, {className: `${readyClass} ${readyClass}-outline`});
   return (
-    <g clip-path={`url(#${maskId})`} >
-      {textOutline}
-      {textFill}
+    <g clipPath={`url(#${maskId})`} >
+      <g className={animation}>
+        {textOutline}
+        {textFill}
+      </g>
     </g>
   );
 };

@@ -14,6 +14,14 @@
   stroke: #838383;
 }
 
+/* This allows react to generate the appropriate
+   vendor prefixes for 'animation' */
+.go { animation: go 250ms; }
+.ready-0 { animation: ready-0 250ms; }
+.ready-1 { animation: ready-1 250ms; }
+.ready-2 { animation: ready-2 250ms; }
+.ready-3 { animation: ready-3 250ms; }
+
 @keyframes go {
   0% { font-size: 0pt; }
   75% { font-size: 55pt; }
