@@ -257,6 +257,10 @@ class App extends Component {
   }
 
   dragMove(canvasPoint) {
+    if (this.props.gameState === GAMESTATE_PAUSED) {
+      return;
+    }
+
     this.updateOrientation(canvasPoint);
 
     const fp = this.fieldPoint(canvasPoint);
@@ -271,6 +275,10 @@ class App extends Component {
   }
 
   dragEnd() {
+    if (this.props.gameState === GAMESTATE_PAUSED) {
+      return;
+    }
+
     if (this.activeTouches === 0 && !this.mouseIsDown) {
       this.place = true;
     }

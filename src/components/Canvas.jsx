@@ -8,10 +8,14 @@ import ReadyGo from './ReadyGo';
 import Button from './Button';
 import OrientationSelector from './OrientationSelector';
 import PreviewPiece from './PreviewPiece';
+import OutlineText from './OutlineText';
+
+import './Pause.css';
 
 import {
   blockSizeInUnits,
   GAMEMODE_LINE_TARGET,
+  GAMESTATE_PAUSED,
   passiveSupported,
   totalReadyMillis,
 } from '../constants';
@@ -40,6 +44,7 @@ class Canvas extends Component {
     config: {
       blockStyles
     },
+    gameState,
     readyMillis,
     readyAnimationIndex,
   } = props;
@@ -100,6 +105,14 @@ class Canvas extends Component {
   const pieceX = fieldX + props.activePosition.col * blockSizeInUnits;
   const pieceY = fieldY + props.activePosition.row * blockSizeInUnits;
 
+  const pauseText = (gameState === GAMESTATE_PAUSED
+    ? <OutlineText
+        x={fieldX + fieldWidth/2}
+        y={fieldY + fieldHeight/2}
+        className="pause"
+        text="PAUSED" />
+    : null);
+
   const activePiece = (props.activePosition.row !== -1
     ? <Piece
         x={pieceX}
@@ -150,6 +163,7 @@ class Canvas extends Component {
         blockStyles={blockStyles}
         rows={fieldRows}
         cols={fieldCols}
+        gameState={gameState}
         blocks={props.blocks}
         blockCount={props.blockCount} />
       {activePiece}
@@ -176,6 +190,16 @@ class Canvas extends Component {
         pressedColor="#292929"
         onPressed={props.mainMenu}
       />
+      <Button
+        // TODO: calculate the position for this properly...
+        x={fieldX + fieldWidth + 8} y={fieldY + 8 + 32 + 8 + 32 + 8}
+        width={58}
+        height={32}
+        text="PAUSE"
+        color="#3e3e3e"
+        pressedColor="#292929"
+        onPressed={props.pause}
+      />
       <ReadyGo
         totalReadyMillis={totalReadyMillis}
         remainingMillis={readyMillis}
@@ -184,6 +208,7 @@ class Canvas extends Component {
         x={fieldX + fieldWidth/2}
         y={fieldY + fieldHeight/2}
       />
+      {pauseText}
     </svg>
   );
 }

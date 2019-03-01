@@ -1,0 +1,15 @@
+.pause {
+  stroke-width: 6;
+  stroke: transparent;
+  fill: white;
+  font-size: 40pt;
+  font-weight: 500;
+  letter-spacing: 3pt;
+  animation: pause 250ms;
+}
+
+@keyframes pause {
+  0% { font-size: 0pt; }
+  75% { font-size: 45pt; }
+  100% { font-size: 40pt; }
+}
