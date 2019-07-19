@@ -54,6 +54,66 @@ export function placeBlock(x, y, piece, orientation, field) {
   }
 }
 
+export function hasPath(destX, destY, piece, orientation, field) {
+  const fieldWidth = field.blocks[0].length;
+  const fieldHeight = field.blocks.length;
+
+  // TODO: yuck! Refactor
+  const ORIENTATION_COUNT = 4;
+
+  // TODO: Dynamic? Take as argument?
+  var srcX = fieldWidth/2;
+  var srcY = 0;
+
+  let visited = Array(fieldHeight).fill(0).map(r => Array(fieldWidth).fill(false));
+  let nodes = [{x: srcX, y: srcY}];
+
+  let checkAndPush = function (node) {
+    if (visited[node.y][node.x]) {
+      return;
+    }
+  
+    for (var o = 0; o < ORIENTATION_COUNT; o++) {
+      if (!checkCollision(node.x, node.y, piece, o, field)) {
+        nodes.push(node);
+        return;
+      }
+    }
+  };
+
+  if (destX < 0 || destX >= fieldWidth ||
+      destY < 0 || destY >= fieldHeight) {
+    return false;
+  }
+
+  while (nodes.length) {
+    var node = nodes.pop();
+    visited[node.y][node.x] = true;
+
+    // TODO: Proper wall kick checks?
+    // e.g.
+    // - T-Spin triples fail.
+    // - Some T-Spin doubles succeed when
+    //   they should fail.
+    if (node.x - 1 >= 0) {
+      var moveLeft = {x: node.x - 1, y: node.y};
+      checkAndPush(moveLeft);
+    }
+
+    if (node.x + 1 < fieldWidth) {
+      var moveRight = {x: node.x + 1, y: node.y};
+      checkAndPush(moveRight);
+    }
+
+    if (node.y + 1 < fieldHeight) {
+      var moveDown = {x: node.x, y: node.y + 1};
+      checkAndPush(moveDown);
+    }
+  }
+
+  return visited[destY][destX];
+}
+
 export function checkPlaceability(x, y, piece, orientation, field) {
   if (piece !== PIECE_NONE &&
       orientation !== -1 &&

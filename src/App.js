@@ -440,6 +440,8 @@ class App extends Component {
     // if there's any slot we can place the piece in any orientation
     // the player can still "continue", even if that will still lead
     // to a game over.
+    //
+    // TODO: Also needs a valid path
     for (let r = 0; r < field.blocks.length; r++) {
       let row = field.blocks[r];
       for (let c = 0; c < row.length; c++) {
