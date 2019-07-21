@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
 
 import Block from './Block';
+import DebugPathMatrix from './DebugPathMatrix';
+import DebugPlaceableMatrix from './DebugPlaceableMatrix';
 import FieldBackground from './FieldBackground';
 
 class Field extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
-    const { activePosition, blockCount } = this.props;
+    const { activePosition, blockCount, placeableMatrix } = this.props;
 
     return activePosition.row !== nextProps.activePosition.row ||
            activePosition.col !== nextProps.activePosition.col ||
+           (placeableMatrix !== nextProps.placeableMatrix && process.env.NODE_ENV !== 'production') ||
            blockCount !== nextProps.blockCount;
   }
 
@@ -53,6 +56,35 @@ class Field extends Component {
       }
     }
 
+    const pathMatrix = (process.env.NODE_ENV !== 'production'
+      ? <DebugPathMatrix
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+        rows={rows}
+        cols={cols}
+        blockSize={blockSize}
+        pathMatrix={this.props.pathMatrix}
+        placeableMatrix={this.props.placeableMatrix}
+      />
+      : null
+    );
+
+    const placeableMatrix = (process.env.NODE_ENV !== 'production'
+      ? <DebugPlaceableMatrix
+          x={x}
+          y={y}
+          width={width}
+          height={height}
+          rows={rows}
+          cols={cols}
+          blockSize={blockSize}
+          placeableMatrix={this.props.placeableMatrix}
+        />
+      : null
+    );
+
     return (
       <g id="field">
         <FieldBackground
@@ -64,7 +96,9 @@ class Field extends Component {
           cols={cols}
           blockSize={blockSize}
         />
+        {pathMatrix}
         {grid}
+        {placeableMatrix}
         <rect
           id="field-border"
           style={borderStyle}
