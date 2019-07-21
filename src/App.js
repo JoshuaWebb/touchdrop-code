@@ -19,7 +19,7 @@ import {
   placeBlock, PIECE_NONE, ORIENTATION_NONE,
   ORIENTATION_UP, ORIENTATION_RIGHT,
   ORIENTATION_DOWN, ORIENTATION_LEFT,
-  checkPlaceability,
+  checkPlaceability, checkPath,
 } from './components/Piece';
 
 const orientations = [
@@ -127,6 +127,17 @@ class App extends Component {
   // updates the state/container.
   selectOrientation(orientation) {
     this.orientation = orientation;
+
+    this.placeableMatrix =  Array(this.fieldDimensions.height).fill(0).map(r => Array(this.fieldDimensions.width).fill(false));
+
+    for (let r = 0; r < this.field.blocks.length; r++) {
+      let row = this.field.blocks[r];
+      for (let c = 0; c < row.length; c++) {
+        if (checkPlaceability(c, r, this.currentPiece, this.orientation, this.field, this.pathMatrix)) {
+          this.placeableMatrix[r][c] = true && this.pathMatrix[r][c];
+        }
+      }
+    }
   }
 
   keydown(event) {
@@ -191,6 +202,12 @@ class App extends Component {
     this.init();
     this.props.reset();
     this.rollNextPiece();
+    this.pathMatrix = checkPath(this.currentPiece, this.field);
+
+    // TODO: Mutate array in place
+    // and commit through redux like the
+    // field
+    this.placeableMatrix = Array(this.fieldDimensions.height).fill(0).map(r => Array(this.fieldDimensions.width).fill(false));
 
     // TODO: "READY" / "GO"
     this.lastPlayingTime = new Date();
@@ -429,10 +446,11 @@ class App extends Component {
       nextPieces.push(this.randomizer.next());
     }
 
+    this.currentPiece = nextPiece;
     this.props.nextPiece(nextPiece, nextPieces);
   }
 
-  checkGameOver(piece, field) {
+  checkGameOver(piece, field, pathMatrix) {
     if (piece === PIECE_NONE) {
       return false;
     }
@@ -444,7 +462,7 @@ class App extends Component {
       let row = field.blocks[r];
       for (let c = 0; c < row.length; c++) {
         for (let o of orientations) {
-          if (checkPlaceability(c, r, piece, o, field)) {
+          if (checkPlaceability(c, r, piece, o, field, pathMatrix)) {
             return false;
           }
         }
@@ -475,7 +493,7 @@ class App extends Component {
       this.props.checkPlaceability(
         this.activePosition.col, this.activePosition.row,
         this.props.currentPiece, this.orientation,
-        this.field
+        this.field, this.pathMatrix
       );
 
       this.totalTimerMillis += millisDiff;
@@ -483,7 +501,7 @@ class App extends Component {
       // you can currently place the piece anywhere, but if we change over to
       // using a reference piece we'll need to check every time the reference
       // piece moves.
-      let gameIsOver = this.checkGameOver(this.props.currentPiece, this.field);
+      let gameIsOver = this.checkGameOver(this.props.currentPiece, this.field, this.pathMatrix);
       if (gameIsOver) {
         this.props.setGameState(GAMESTATE_END);
       }
@@ -534,6 +552,8 @@ class App extends Component {
           this.activePosition.col = -1;
           this.orientation = ORIENTATION_NONE;
           this.rollNextPiece();
+          this.pathMatrix = checkPath(this.currentPiece, this.field);
+          this.placeableMatrix = Array(this.fieldDimensions.height).fill(0).map(r => Array(this.fieldDimensions.width).fill(false));
         }
       }
       // Only do after potentially resetting above
@@ -599,6 +619,8 @@ class App extends Component {
         currentPiece={this.props.currentPiece}
         orientation={this.props.orientation}
         placeable={this.props.placeable}
+        pathMatrix={this.pathMatrix}
+        placeableMatrix={this.placeableMatrix}
         blocks={this.props.field.blocks}
         config={this.props.config}
         linesCleared={this.props.linesCleared}

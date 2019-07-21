@@ -29,6 +29,8 @@ const mapStateToProps = state => ({
   previewLength: state.previewLength,
   orientation: state.orientation,
   field: state.field,
+  pathMatrix: state.pathMatrix,
+  placeableMatrix: state.placeableMatrix,
   blockCount: state.blockCount,
   placeable: state.placeable,
   linesCleared: state.linesCleared,
@@ -55,8 +57,8 @@ const mapDispatchToProps = dispatch => ({
   placeBlock: (field) => {
     dispatch(placeBlock(field));
   },
-  checkPlaceability: (x, y, piece, orientation, field) => {
-    dispatch(checkPlaceability(x, y, piece, orientation, field));
+  checkPlaceability: (x, y, piece, orientation, field, pathMatrix) => {
+    dispatch(checkPlaceability(x, y, piece, orientation, field, pathMatrix));
   },
   updateStats: (linesCleared) => {
     dispatch(updateStats(linesCleared));

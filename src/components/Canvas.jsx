@@ -164,6 +164,8 @@ class Canvas extends Component {
         rows={fieldRows}
         cols={fieldCols}
         gameState={gameState}
+        pathMatrix={props.pathMatrix}
+        placeableMatrix={props.placeableMatrix}
         blocks={props.blocks}
         blockCount={props.blockCount} />
       {activePiece}

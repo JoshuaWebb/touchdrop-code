@@ -54,12 +54,20 @@ export function placeBlock(x, y, piece, orientation, field) {
   }
 }
 
-export function checkPath(destX, destY, piece, orientation, field) {
+  // TODO: check if the piece has a valid path to get
+  // to this position from the top.
+  //
+  // Idea: Instead of a consant reference point at the top,
+  // ave a regular piece dropping slowly and move it
+  // left/right as the player drags the destination left/right
+  // if the regular piece becomes obstructed, the player can
+  // no longer move it in that direction, and if the piece
+  // lands in a lockable position before the player lets go
+  // lock the piece. The dragging should assume optimal play
+  // including valid spins/kicks.
+export function checkPath(piece, field) {
   const fieldWidth = field.blocks[0].length;
   const fieldHeight = field.blocks.length;
-
-  // TODO: yuck! Refactor
-  const ORIENTATION_COUNT = 4;
 
   // TODO: Allow spinning across the top
   //       hidden blocks?
@@ -75,6 +83,8 @@ export function checkPath(destX, destY, piece, orientation, field) {
       return;
     }
 
+    // TODO: yuck! Refactor
+    const ORIENTATION_COUNT = 4;
     for (var o = 0; o < ORIENTATION_COUNT; o++) {
       if (!checkCollision(node.x, node.y, piece, o, field)) {
         nodes.push(node);
@@ -82,11 +92,6 @@ export function checkPath(destX, destY, piece, orientation, field) {
       }
     }
   };
-
-  if (destX < 0 || destX >= fieldWidth ||
-      destY < 0 || destY >= fieldHeight) {
-    return false;
-  }
 
   while (nodes.length) {
     var node = nodes.pop();
@@ -113,10 +118,10 @@ export function checkPath(destX, destY, piece, orientation, field) {
     }
   }
 
-  return visited[destY][destX];
+  return visited;
 }
 
-export function checkPlaceability(x, y, piece, orientation, field) {
+export function checkPlaceability(x, y, piece, orientation, field, pathMatrix) {
   if (piece === PIECE_NONE ||
       orientation === -1 ||
       x === -1 ||
@@ -124,21 +129,15 @@ export function checkPlaceability(x, y, piece, orientation, field) {
   ) {
     return false;
   }
-  // TODO: check if the piece has a valid path to get
-  // to this position from the top.
-  //
-  // Idea: Instead of a consant reference point at the top,
-  // ave a regular piece dropping slowly and move it
-  // left/right as the player drags the destination left/right
-  // if the regular piece becomes obstructed, the player can
-  // no longer move it in that direction, and if the piece
-  // lands in a lockable position before the player lets go
-  // lock the piece. The dragging should assume optimal play
-  // including valid spins/kicks.
+
   const collides = checkCollision(x, y, piece, orientation, field);
   const supported = !collides && checkCollision(x, y + 1, piece, orientation, field);
-  const hasPath = supported && checkPath(x, y, piece, orientation, field);
-  return !collides && hasPath && supported;
+
+  // TODO: Handle hidden field stuff
+  const rr = pathMatrix[y];
+  const path = !rr || rr[x];
+
+  return !collides && supported && path;
 }
 
 export function checkCollision(x, y, piece, orientation, field) {

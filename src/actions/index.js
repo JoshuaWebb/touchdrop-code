@@ -42,13 +42,14 @@ export const placeBlock = (field) => ({
   field: field,
 });
 
-export const checkPlaceability = (x, y, piece, orientation, field) => ({
+export const checkPlaceability = (x, y, piece, orientation, field, pathMatrix) => ({
   type: CHECK_PLACEABILITY,
   x: x,
   y: y,
   piece: piece,
   orientation: orientation,
   field: field,
+  pathMatrix: pathMatrix,
 });
 
 export const updateStats = (linesCleared) => ({
